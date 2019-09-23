@@ -9,8 +9,10 @@ class Ornefnaskrar(models.Model):
 	skrasetjari = models.CharField(max_length=260, blank=True, null=True, verbose_name='skrásetjari')
 	dagsetning = models.DateField(blank=True, null=True)
 	skra_id = models.CharField(max_length=260, blank=True, null=True)
+	stada = models.CharField(max_length=300, blank=True, null=True, choices=[('Yfirfarið', 'Yfirfarið'), ('Í vinnslu', 'Í vinnslu')])
 	stafraent = models.BooleanField(blank=True, null=True, verbose_name='stafrænt?')
 	pappir = models.BooleanField(blank=True, null=True, verbose_name='pappír?')
+	pdf_skra = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra', verbose_name='pdf skrá', blank=True, null=True)
 
 	tegund = models.ManyToManyField(
 		'Tegundir',
@@ -27,8 +29,8 @@ class Ornefnaskrar(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'ornefnaskrar'
-		verbose_name = 'örnefnaskrá'
-		verbose_name_plural = 'örnefnaskrár'
+		verbose_name = 'skjal'
+		verbose_name_plural = 'skjöl'
 
 	def __str__(self):
 		return self.titill
@@ -80,5 +82,84 @@ class OrnefnaskrarTegundir(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'ornefnaskrar_tegundir'
-		verbose_name = 'tegund örnefnaskrár'
-		verbose_name_plural = 'tegund örnefnaskrár'
+		verbose_name = 'tegund skjals'
+		verbose_name_plural = 'tegund skjals'
+
+class PdfSkrarFinnur(models.Model):
+	slod = models.CharField(primary_key=True, max_length=500, blank=False, null=False, verbose_name='slóð')
+	sysla_id = models.IntegerField(blank=True, null=True, verbose_name='auðkenni sýslu')
+	hreppur_id = models.IntegerField(blank=True, null=True, verbose_name='auðkenni hrepps')
+	sysla = models.CharField(max_length=300, blank=True, null=True, verbose_name='sýsla')
+	hreppur = models.CharField(max_length=300, blank=True, null=True, verbose_name='hreppur')
+
+	def __str__(self):
+		return self.slod
+
+	class Meta:
+		managed = False
+		db_table = 'pdf_skrar_finnur'
+		verbose_name = 'pdf skrá'
+		verbose_name_plural = 'pdf skrár'
+
+
+class BaejatalBaeir(models.Model):
+	id = models.AutoField(primary_key=True)
+	baejarnafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='bæjarnafn')
+	nuv_sveitarf = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='nuv_sveitarf', verbose_name='núverandi sveitarfélag')
+	gamalt_sveitarf = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='gamalt_sveitarf', verbose_name='sveitarfélag (1970)')
+	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla')
+	sveitarf_temp = models.IntegerField(blank=True, null=True)
+
+	def __str__(self):
+		return self.baejarnafn+', '+str(self.nuv_sveitarf)+', '+str(self.sysla)
+
+	class Meta:
+		managed = False
+		db_table = 'baejatal_baeir'
+		verbose_name = 'bær'
+		verbose_name_plural = 'bæir'
+
+
+class BaejatalSveitarfelogGomul(models.Model):
+	id = models.AutoField(primary_key=True)
+	skst = models.CharField(max_length=42, blank=True, null=True, verbose_name='skammstöfun')
+	nafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='nafn')
+
+	def __str__(self):
+		return self.skst
+
+	class Meta:
+		managed = False
+		db_table = 'baejatal_sveitarfelog_gomul'
+		verbose_name = 'sveitarfélag (1970)'
+		verbose_name_plural = 'sveitarfélög (1970)'
+
+
+class BaejatalSveitarfelogNy(models.Model):
+	id = models.AutoField(primary_key=True)
+	skst = models.CharField(max_length=42, blank=True, null=True, verbose_name='skammstöfun')
+	nafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='nafn')
+
+	def __str__(self):
+		return self.skst
+
+	class Meta:
+		managed = False
+		db_table = 'baejatal_sveitarfelog_ny'
+		verbose_name = 'sveitarfélag'
+		verbose_name_plural = 'sveitarfélög'
+
+
+class BaejatalSyslur(models.Model):
+	id = models.AutoField(primary_key=True)
+	skst = models.CharField(max_length=42, blank=True, null=True, verbose_name='skammstöfun')
+	nafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='nafn')
+
+	def __str__(self):
+		return self.skst
+
+	class Meta:
+		managed = False
+		db_table = 'baejatal_syslur'
+		verbose_name = 'sýsla'
+		verbose_name_plural = 'sýslur'
