@@ -108,6 +108,9 @@ class BaejatalBaeir(models.Model):
 	nuv_sveitarf = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='nuv_sveitarf', verbose_name='núverandi sveitarfélag')
 	gamalt_sveitarf = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='gamalt_sveitarf', verbose_name='sveitarfélag (1970)')
 	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla')
+	lbs_lykill = models.CharField(max_length=50, blank=True, null=True, verbose_name='lykill landsbókasafns')
+	lat = models.FloatField(blank=True, null=True)
+	lng = models.FloatField(blank=True, null=True)
 	sveitarf_temp = models.IntegerField(blank=True, null=True)
 
 	def __str__(self):
@@ -126,7 +129,7 @@ class BaejatalSveitarfelogGomul(models.Model):
 	nafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='nafn')
 
 	def __str__(self):
-		return self.skst
+		return self.nafn
 
 	class Meta:
 		managed = False
@@ -141,7 +144,7 @@ class BaejatalSveitarfelogNy(models.Model):
 	nafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='nafn')
 
 	def __str__(self):
-		return self.skst
+		return self.nafn
 
 	class Meta:
 		managed = False
@@ -156,7 +159,7 @@ class BaejatalSyslur(models.Model):
 	nafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='nafn')
 
 	def __str__(self):
-		return self.skst
+		return self.nafn
 
 	class Meta:
 		managed = False
