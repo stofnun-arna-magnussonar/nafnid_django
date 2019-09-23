@@ -45,6 +45,7 @@ class OrnefniAdmin(admin.ModelAdmin):
 
 class BaejatalBaeirAdmin(admin.ModelAdmin):
 	list_display = ['id', 'baejarnafn']
+	list_filter = ['sysla', 'nuv_sveitarf', 'gamalt_sveitarf']
 
 class BaejatalSveitarfelogGomulAdmin(admin.ModelAdmin):
 	pass
