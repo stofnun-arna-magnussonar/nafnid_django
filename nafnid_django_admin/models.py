@@ -26,6 +26,18 @@ class Ornefnaskrar(models.Model):
 		verbose_name = 'Örnefni'
 	)
 
+	baeir = models.ManyToManyField(
+		'BaejatalBaeir',
+		through='OrnefnaskrarBaeir',
+		verbose_name = 'bæir'
+	)
+
+	einstaklingar = models.ManyToManyField(
+		'Einstaklingar',
+		through='OrnefnaskrarEinstaklingar',
+		verbose_name = 'einstaklingar'
+	)
+
 	class Meta:
 		managed = False
 		db_table = 'ornefnaskrar'
@@ -34,6 +46,30 @@ class Ornefnaskrar(models.Model):
 
 	def __str__(self):
 		return self.titill
+
+
+class OrnefnaskrarBaeir(models.Model):
+    ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
+    baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, db_column='baer', verbose_name='bær')
+    tegund = models.CharField(max_length=100, blank=True, null=True, verbose_name='tegund')
+
+    class Meta:
+        managed = False
+        db_table = 'ornefnaskrar_baeir'
+        verbose_name = 'bær'
+        verbose_name_plural = 'bæir'
+
+
+class OrnefnaskrarEinstaklingar(models.Model):
+    einstaklingur = models.ForeignKey('Einstaklingar', models.DO_NOTHING, db_column='einstaklingur', verbose_name='einstaklingur')
+    ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
+    hlutverk = models.CharField(max_length=200, blank=True, null=True, verbose_name='hlutverk')
+
+    class Meta:
+        managed = False
+        db_table = 'ornefnaskrar_einstaklingar'
+        verbose_name = 'einstaklingur'
+        verbose_name_plural = 'einstaklingar'
 
 
 class Ornefni(models.Model):
@@ -166,3 +202,14 @@ class BaejatalSyslur(models.Model):
 		db_table = 'baejatal_syslur'
 		verbose_name = 'sýsla'
 		verbose_name_plural = 'sýslur'
+
+
+class Einstaklingar(models.Model):
+    nafn = models.CharField(max_length=250, blank=True, null=True, verbose_name='nafn')
+    faedingarar = models.IntegerField(blank=True, null=True, verbose_name='fæðingarár')
+
+    class Meta:
+        managed = False
+        db_table = 'einstaklingar'
+        verbose_name = 'einstaklingur'
+        verbose_name_plural = 'einstaklingar'
