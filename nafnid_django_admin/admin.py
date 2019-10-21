@@ -14,6 +14,12 @@ class OrnefnaskrarTegundirInline(admin.TabularInline):
 	model = Ornefnaskrar.tegund.through
 
 
+class OrnefnaskrarStadaInline(admin.TabularInline):
+	list_display = ('stada', 'athugasemd')
+	readonly_fields = ['id']
+	model = Ornefnaskrar.stada.through
+
+
 class OrnefnaskrarOrnefniInline(admin.TabularInline):
 	list_display = ('ornefni')
 	readonly_fields = ['id']
@@ -39,25 +45,29 @@ class OrnefnaskrarEinstaklingarInline(admin.TabularInline):
 
 class OrnefnaskrarAdmin(admin.ModelAdmin):
 	fields = (
-		('titill', 'skra_id'),
+		('titill', 'id'),
 		('sysla', 'hreppur'),
 		'texti',
-		('skrasetjari', 'heimildamadur'),
-		'dagsetning',
-		('stada', 'stafraent', 'pappir'),
+		'stafraent', 
+		'pappir',
 		'pdf_skra'
 	)
 	inlines = [
 		OrnefnaskrarTegundirInline, 
-		OrnefnaskrarOrnefniInline, 
+		OrnefnaskrarStadaInline, 
 		BaeirOrnefniInline,
-		OrnefnaskrarEinstaklingarInline
+		OrnefnaskrarEinstaklingarInline,
+		OrnefnaskrarOrnefniInline
 	]
+	readonly_fields = ['id']
 	raw_id_fields = ['pdf_skra']
-	search_fields = ['tititt', 'skra_id', 'texti']
+	search_fields = ['tititt', 'texti']
 	list_filter = ['stada', 'stafraent', 'pappir']
 
 class TegundirAdmin(admin.ModelAdmin):
+	pass
+
+class StadaAdmin(admin.ModelAdmin):
 	pass
 
 class OrnefniAdmin(admin.ModelAdmin):
@@ -85,6 +95,7 @@ class BaejatalSyslurAdmin(admin.ModelAdmin):
 admin.site.register(Ornefnaskrar, OrnefnaskrarAdmin)
 admin.site.register(Ornefni, OrnefniAdmin)
 admin.site.register(Tegundir, TegundirAdmin)
+admin.site.register(Stada, StadaAdmin)
 admin.site.register(PdfSkrarFinnur, PdfSkrarFinnurAdmin)
 admin.site.register(Einstaklingar, EinstaklingarAdmin)
 

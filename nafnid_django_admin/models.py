@@ -1,15 +1,11 @@
 from django.db import models
 
 class Ornefnaskrar(models.Model):
+	id = models.AutoField(primary_key=True)
 	titill = models.CharField(max_length=300, blank=True, null=True)
 	texti = models.TextField(blank=True, null=True)
-	sysla = models.CharField(max_length=20, blank=True, null=True, verbose_name='sýsla')
-	hreppur = models.CharField(max_length=20, blank=True, null=True)
-	heimildamadur = models.CharField(max_length=260, blank=True, null=True, verbose_name='heimildamaður')
-	skrasetjari = models.CharField(max_length=260, blank=True, null=True, verbose_name='skrásetjari')
-	dagsetning = models.DateField(blank=True, null=True)
-	skra_id = models.CharField(max_length=260, blank=True, null=True)
-	stada = models.CharField(max_length=300, blank=True, null=True, choices=[('Yfirfarið', 'Yfirfarið'), ('Í vinnslu', 'Í vinnslu')])
+	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla', blank=True, null=True)
+	hreppur = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='hreppur', verbose_name='hreppur', blank=True, null=True)
 	stafraent = models.BooleanField(blank=True, null=True, verbose_name='stafrænt?')
 	pappir = models.BooleanField(blank=True, null=True, verbose_name='pappír?')
 	pdf_skra = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra', verbose_name='pdf skrá', blank=True, null=True)
@@ -18,6 +14,12 @@ class Ornefnaskrar(models.Model):
 		'Tegundir',
 		through='OrnefnaskrarTegundir',
 		verbose_name = 'Tegundir skráningar'
+	)
+
+	stada = models.ManyToManyField(
+		'Stada',
+		through='OrnefnaskrarStada',
+		verbose_name = 'Staða skráningar'
 	)
 
 	ornefni = models.ManyToManyField(
@@ -63,7 +65,7 @@ class OrnefnaskrarBaeir(models.Model):
 class OrnefnaskrarEinstaklingar(models.Model):
     einstaklingur = models.ForeignKey('Einstaklingar', models.DO_NOTHING, db_column='einstaklingur', verbose_name='einstaklingur')
     ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
-    hlutverk = models.CharField(max_length=200, blank=True, null=True, verbose_name='hlutverk')
+    hlutverk = models.CharField(max_length=200, blank=True, null=True, verbose_name='hlutverk', choices=[('skrasetjari', 'Skrásetjari'), ('heimildamadur', 'Heimildamaður')])
 
     class Meta:
         managed = False
@@ -120,6 +122,30 @@ class OrnefnaskrarTegundir(models.Model):
 		db_table = 'ornefnaskrar_tegundir'
 		verbose_name = 'tegund skjals'
 		verbose_name_plural = 'tegund skjals'
+
+class Stada(models.Model):
+	stada = models.CharField(max_length=200, blank=True, null=True)
+
+	class Meta:
+		managed = False
+		db_table = 'stada'
+		verbose_name = 'stada'
+		verbose_name_plural = 'stöður'
+
+	def __str__(self):
+		return self.stada
+
+
+class OrnefnaskrarStada(models.Model):
+	skra = models.ForeignKey(Ornefnaskrar, on_delete=models.DO_NOTHING, db_column='skra', verbose_name='skrá')
+	stada = models.ForeignKey(Stada, on_delete=models.DO_NOTHING, db_column='stada')
+	athugasemd = models.TextField(blank=True, null=True)
+
+	class Meta:
+		managed = False
+		db_table = 'ornefnaskrar_stada'
+		verbose_name = 'staða skjals'
+		verbose_name_plural = 'staða skjals'
 
 class PdfSkrarFinnur(models.Model):
 	slod = models.CharField(primary_key=True, max_length=500, blank=False, null=False, verbose_name='slóð')
