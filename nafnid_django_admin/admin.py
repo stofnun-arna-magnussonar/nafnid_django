@@ -61,7 +61,7 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
 	]
 	readonly_fields = ['id']
 	raw_id_fields = ['pdf_skra']
-	search_fields = ['tititt', 'texti']
+	search_fields = ['titill', 'texti']
 	list_filter = (
 		'stada', 
 		'stafraent', 
