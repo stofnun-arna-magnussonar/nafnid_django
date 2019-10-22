@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'nafnid_django_admin',
-
+    'django_admin_listfilter_dropdown',
 ]
 
 MIDDLEWARE = [

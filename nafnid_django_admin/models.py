@@ -5,7 +5,7 @@ class Ornefnaskrar(models.Model):
 	titill = models.CharField(max_length=300, blank=True, null=True)
 	texti = models.TextField(blank=True, null=True)
 	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla', blank=True, null=True)
-	hreppur = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='hreppur', verbose_name='hreppur', blank=True, null=True)
+	hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='hreppur', verbose_name='hreppur', blank=True, null=True)
 	stafraent = models.BooleanField(blank=True, null=True, verbose_name='stafrænt?')
 	pappir = models.BooleanField(blank=True, null=True, verbose_name='pappír?')
 	pdf_skra = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra', verbose_name='pdf skrá', blank=True, null=True)
@@ -153,6 +153,8 @@ class PdfSkrarFinnur(models.Model):
 	hreppur_id = models.IntegerField(blank=True, null=True, verbose_name='auðkenni hrepps')
 	sysla = models.CharField(max_length=300, blank=True, null=True, verbose_name='sýsla')
 	hreppur = models.CharField(max_length=300, blank=True, null=True, verbose_name='hreppur')
+	bt_hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='bt_hreppur', verbose_name='sveitarfélag (bæjatal, 1970)')
+	bt_sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='bt_sysla', verbose_name='sýsla (bæjatal)')
 
 	def __str__(self):
 		return self.slod

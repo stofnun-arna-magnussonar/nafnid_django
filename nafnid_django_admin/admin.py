@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 from .models import *
 
 class PdfSkrarFinnurAdmin(admin.ModelAdmin):
@@ -62,7 +62,13 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
 	readonly_fields = ['id']
 	raw_id_fields = ['pdf_skra']
 	search_fields = ['tititt', 'texti']
-	list_filter = ['stada', 'stafraent', 'pappir']
+	list_filter = (
+		'stada', 
+		'stafraent', 
+		'pappir', 
+		('sysla', RelatedDropdownFilter),
+		('hreppur', RelatedDropdownFilter)
+	)
 
 class TegundirAdmin(admin.ModelAdmin):
 	pass
