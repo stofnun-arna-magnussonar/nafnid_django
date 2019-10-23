@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import format_html
 
 class Ornefnaskrar(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -155,6 +156,19 @@ class PdfSkrarFinnur(models.Model):
 	hreppur = models.CharField(max_length=300, blank=True, null=True, verbose_name='hreppur')
 	bt_hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='bt_hreppur', verbose_name='sveitarfélag (bæjatal, 1970)')
 	bt_sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='bt_sysla', verbose_name='sýsla (bæjatal)')
+
+	def file_tag(self):
+		#	<a href="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}">Slóð á skrá</a>
+		map_html = """
+			<embed src="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}" width="100%" height="800">
+		"""
+
+		return format_html(map_html,
+			self.slod
+		)
+
+	file_tag.short_description = 'Tengill á skrá'
+	file_tag.allow_tags = True
 
 	def __str__(self):
 		return self.slod

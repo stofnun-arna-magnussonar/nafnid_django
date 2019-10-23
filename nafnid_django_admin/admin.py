@@ -3,6 +3,17 @@ from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 from .models import *
 
 class PdfSkrarFinnurAdmin(admin.ModelAdmin):
+	fields = (
+		'slod',
+		'sysla_id',
+		'hreppur_id',
+		'sysla',
+		'hreppur',
+		'bt_hreppur',
+		'bt_sysla',
+		'file_tag'
+	)
+	readonly_fields = ['file_tag']
 	list_display = ('slod', 'sysla', 'hreppur')
 	search_fields = ['slod', 'sysla', 'hreppur']
 	list_filter = ['sysla', 'hreppur']
