@@ -66,7 +66,7 @@ class OrnefnaskrarBaeir(models.Model):
 class OrnefnaskrarEinstaklingar(models.Model):
 	einstaklingur = models.ForeignKey('Einstaklingar', models.DO_NOTHING, db_column='einstaklingur', verbose_name='einstaklingur')
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
-	hlutverk = models.CharField(max_length=200, blank=True, null=True, verbose_name='hlutverk', choices=[('skrasetjari', 'Skrásetjari'), ('heimildamadur', 'Heimildamaður')])
+	hlutverk = models.CharField(max_length=200, blank=True, null=True, verbose_name='hlutverk', choices=[('skrasetjari', 'Skrásetjari'), ('heimildamadur', 'Heimildamaður'), ('starfsmaður örnefnastofnunar', 'Starfsmaður Örnefnastofnunar'), ('kortagerð', 'Kortagerð')])
 
 	class Meta:
 		managed = False
