@@ -173,7 +173,7 @@ class PdfSkrarFinnur(models.Model):
 	file_tag.allow_tags = True
 
 	def __str__(self):
-		return self.slod
+		return str(self.slod)
 
 	class Meta:
 		managed = False
