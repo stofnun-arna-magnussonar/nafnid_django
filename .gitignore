@@ -106,3 +106,4 @@ venv.bak/
 nafnid_django/dbconfig.py
 
 media/uploads
+medua/*

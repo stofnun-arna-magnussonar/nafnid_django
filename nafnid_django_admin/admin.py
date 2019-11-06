@@ -1,23 +1,27 @@
 from django.contrib import admin
-from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter, DropdownFilter
 from .models import *
 
 class PdfSkrarFinnurAdmin(admin.ModelAdmin):
 	fields = (
-		'slod',
 		'sysla_id',
 		'hreppur_id',
-		'sysla',
-		'hreppur',
 		'bt_hreppur',
 		'bt_sysla',
+		'sysla',
+		'hreppur',
+		'slod',
 		'file_tag'
 	)
 	readonly_fields = ['file_tag']
-	list_display = ('slod', 'sysla', 'hreppur')
+	list_display = ('id', 'slod', 'sysla', 'hreppur')
 	search_fields = ['slod', 'sysla', 'hreppur']
-	list_filter = ['sysla', 'hreppur']
-
+	list_filter = (
+		('bt_sysla', RelatedDropdownFilter),
+		('bt_hreppur', RelatedDropdownFilter),
+		('sysla', DropdownFilter),
+		('hreppur', DropdownFilter),
+	)
 
 class OrnefnaskrarTegundirInline(admin.TabularInline):
 	list_display = ('tegund')
