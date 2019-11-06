@@ -9,7 +9,8 @@ class Ornefnaskrar(models.Model):
 	hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='hreppur', verbose_name='hreppur', blank=True, null=True)
 	stafraent = models.BooleanField(blank=True, null=True, verbose_name='stafrænt?')
 	pappir = models.BooleanField(blank=True, null=True, verbose_name='pappír?')
-	pdf_skra = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra', verbose_name='pdf skrá', blank=True, null=True)
+	pdf_skra_id = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra_id', verbose_name='pdf skrá', blank=True, null=True)
+	#pdf_skra = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra', verbose_name='pdf skrá', blank=True, null=True)
 
 	tegund = models.ManyToManyField(
 		'Tegundir',
@@ -149,14 +150,14 @@ class OrnefnaskrarStada(models.Model):
 		verbose_name_plural = 'staða skjals'
 
 class PdfSkrarFinnur(models.Model):
-	slod = models.CharField(primary_key=True, max_length=500, blank=False, null=False, verbose_name='slóð')
+	slod = models.CharField(max_length=500, blank=False, null=False, verbose_name='slóð')
 	sysla_id = models.IntegerField(blank=True, null=True, verbose_name='auðkenni sýslu')
 	hreppur_id = models.IntegerField(blank=True, null=True, verbose_name='auðkenni hrepps')
 	sysla = models.CharField(max_length=300, blank=True, null=True, verbose_name='sýsla (samkvæmt Finni)')
 	hreppur = models.CharField(max_length=300, blank=True, null=True, verbose_name='hreppur (samkvæmt Finni)')
 	bt_hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='bt_hreppur', verbose_name='sveitarfélag (bæjatal, 1970)')
 	bt_sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='bt_sysla', verbose_name='sýsla (bæjatal)')
-	slod = models.FileField(upload_to='nyskannad/', max_length=500, verbose_name='hlaða upp skrá')
+	#upload_slod = models.FileField(upload_to='nyskannad/', max_length=500, verbose_name='hlaða upp skrá')
 
 	def file_tag(self):
 		#	<a href="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}">Slóð á skrá</a>
@@ -172,7 +173,7 @@ class PdfSkrarFinnur(models.Model):
 	file_tag.allow_tags = True
 
 	def __str__(self):
-		return str(self.slod)
+		return self.slod
 
 	class Meta:
 		managed = False

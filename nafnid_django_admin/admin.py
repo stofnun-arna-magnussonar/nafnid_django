@@ -14,7 +14,7 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
 		'file_tag'
 	)
 	readonly_fields = ['file_tag']
-	list_display = ('id', 'slod', 'sysla', 'hreppur')
+	list_display = ('slod', 'sysla', 'hreppur')
 	search_fields = ['slod', 'sysla', 'hreppur']
 	list_filter = (
 		('bt_sysla', RelatedDropdownFilter),
@@ -65,7 +65,7 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
 		'texti',
 		'stafraent', 
 		'pappir',
-		'pdf_skra'
+		'pdf_skra_id'
 	)
 	inlines = [
 		OrnefnaskrarTegundirInline, 
@@ -75,7 +75,7 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
 		OrnefnaskrarOrnefniInline
 	]
 	readonly_fields = ['id']
-	raw_id_fields = ['pdf_skra']
+	raw_id_fields = ['pdf_skra_id']
 	search_fields = ['titill', 'texti']
 	list_filter = (
 		'stada', 
