@@ -3,6 +3,9 @@ from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter, Drop
 from .models import *
 
 class PdfSkrarFinnurAdmin(admin.ModelAdmin):
+	def to_str(self, obj):
+		return obj.__str__()
+
 	fields = (
 		'sysla_id',
 		'hreppur_id',
@@ -14,7 +17,7 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
 		'file_tag'
 	)
 	readonly_fields = ['file_tag']
-	list_display = ('slod', 'sysla', 'hreppur')
+	list_display = ('to_str', 'sysla', 'hreppur')
 	search_fields = ['slod', 'sysla', 'hreppur']
 	list_filter = (
 		('bt_sysla', RelatedDropdownFilter),
