@@ -103,8 +103,8 @@ class BaejatalBaeirAdmin(admin.ModelAdmin):
 	search_fields = ['baejarnafn', 'sysla__nafn', 'nuv_sveitarf__nafn', 'gamalt_sveitarf__nafn']
 
 class EinstaklingarAdmin(admin.ModelAdmin):
-	list_display = ['id', 'nafn', 'faedingarar']
-	list_editable = ['nafn', 'faedingarar']
+	list_display = ['id', 'nafn', 'aukanafn','faedingarstadur','faedingarar']
+	list_editable = ['nafn', 'nafn', 'aukanafn','faedingarstadur','faedingarar']
 	search_fields = ['nafn']
 
 class BaejatalSveitarfelogGomulAdmin(admin.ModelAdmin):
