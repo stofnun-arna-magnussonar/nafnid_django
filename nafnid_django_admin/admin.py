@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter, DropdownFilter
 from .models import *

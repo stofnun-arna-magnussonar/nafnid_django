@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.html import format_html
 
@@ -149,6 +150,15 @@ class OrnefnaskrarStada(models.Model):
 		verbose_name = 'staða skjals'
 		verbose_name_plural = 'staða skjals'
 
+class OnFileField(models.FileField):
+	def __init__(self, *args, **kwargs):
+		super(OnFileField, self).__init__(*args, **kwargs)
+
+	def clean(self, *args, **kwargs):
+		data = super(OnFileField, self).clean(*args, **kwargs)
+		data.name = str(data.name.encode('ascii', 'ignore'))
+		return data
+
 class PdfSkrarFinnur(models.Model):
 	#slod = models.CharField(max_length=500, blank=False, null=False, verbose_name='slóð')
 	sysla_id = models.IntegerField(blank=True, null=True, verbose_name='auðkenni sýslu')
@@ -158,6 +168,7 @@ class PdfSkrarFinnur(models.Model):
 	bt_hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='bt_hreppur', verbose_name='sveitarfélag (bæjatal, 1970)')
 	bt_sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='bt_sysla', verbose_name='sýsla (bæjatal)')
 	slod = models.FileField(upload_to='nyskannad/', max_length=500, verbose_name='pdf skrá')
+	#slod = OnFileField(upload_to='nyskannad/', max_length=500, verbose_name='pdf skrá')
 
 	def file_tag(self):
 		#	<a href="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}">Slóð á skrá</a>
