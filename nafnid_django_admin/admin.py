@@ -14,7 +14,8 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
 		'sysla',
 		'hreppur',
 		'slod',
-		'file_tag'
+		'file_tag',
+		'ocr_text'
 	)
 	readonly_fields = ['file_tag']
 	list_display = ('to_str', 'sysla', 'hreppur')

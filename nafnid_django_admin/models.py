@@ -158,6 +158,7 @@ class PdfSkrarFinnur(models.Model):
 	bt_hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='bt_hreppur', verbose_name='sveitarfélag (bæjatal, 1970)')
 	bt_sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='bt_sysla', verbose_name='sýsla (bæjatal)')
 	slod = models.FileField(upload_to='nyskannad/', max_length=500, verbose_name='pdf skrá')
+	ocr_text = models.TextField(blank=True, null=True, verbose_name='ljóslesinn texti')
 
 	def file_tag(self):
 		#	<a href="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}">Slóð á skrá</a>
