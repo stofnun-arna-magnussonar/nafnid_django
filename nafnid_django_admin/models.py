@@ -250,6 +250,8 @@ class BaejatalSyslur(models.Model):
 
 class Einstaklingar(models.Model):
 	nafn = models.CharField(max_length=250, blank=True, null=True, verbose_name='nafn')
+	aukanafn = models.CharField(max_length=250, blank=True, null=True, verbose_name='aukanafn')
+	faedingarstadur = models.CharField(max_length=250, blank=True, null=True, verbose_name='faedingarstadur')
 	faedingarar = models.IntegerField(blank=True, null=True, verbose_name='fæðingarár')
 
 	class Meta:
