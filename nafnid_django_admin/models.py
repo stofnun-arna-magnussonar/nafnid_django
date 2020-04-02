@@ -264,6 +264,13 @@ class Einstaklingar(models.Model):
 	aukanafn = models.CharField(max_length=250, blank=True, null=True, verbose_name='aukanafn')
 	faedingarstadur = models.CharField(max_length=250, blank=True, null=True, verbose_name='fæðingarstaður')
 	faedingarar = models.IntegerField(blank=True, null=True, verbose_name='fæðingarár')
+	danarar = models.IntegerField(blank=True, null=True, verbose_name='dánarár')
+
+	stadir = models.ManyToManyField(
+		'BaejatalBaeir',
+		through='EinstaklingarBaeir',
+		verbose_name = 'tengdir staðir'
+	)
 
 	class Meta:
 		managed = False
@@ -273,3 +280,14 @@ class Einstaklingar(models.Model):
 
 	def __str__(self):
 		return self.nafn
+
+class EinstaklingarBaeir(models.Model):
+	einstaklingur = models.ForeignKey(Einstaklingar, on_delete=models.DO_NOTHING, db_column='einstaklingur', verbose_name='einstaklingur')
+	baer = models.ForeignKey(BaejatalBaeir, on_delete=models.DO_NOTHING, db_column='baer')
+	tengsl = models.CharField(max_length=250, blank=True, null=True, verbose_name='tengsl', choices=[('heimili', 'Heimili'), ('fæðingarstaður', 'Fæðingarstaður')])
+
+	class Meta:
+		managed = False
+		db_table = 'einstaklingar_baeir'
+		verbose_name = 'tengdur staður'
+		verbose_name_plural = 'tengdir staðir'

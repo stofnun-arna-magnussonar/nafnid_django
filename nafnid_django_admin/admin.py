@@ -39,6 +39,13 @@ class OrnefnaskrarStadaInline(admin.TabularInline):
 	model = Ornefnaskrar.stada.through
 
 
+class EinstaklingarStadirInline(admin.TabularInline):
+	list_display = ('einstaklingur', 'baer')
+	readonly_fields = ['id']
+	raw_id_fields = ['baer']
+	model = Einstaklingar.stadir.through
+
+
 class OrnefnaskrarOrnefniInline(admin.TabularInline):
 	list_display = ('ornefni')
 	readonly_fields = ['id']
@@ -107,6 +114,9 @@ class EinstaklingarAdmin(admin.ModelAdmin):
 	list_display = ['id', 'nafn', 'aukanafn','faedingarstadur','faedingarar']
 	list_editable = ['nafn', 'nafn', 'aukanafn','faedingarstadur','faedingarar']
 	search_fields = ['nafn']
+	inlines = [
+		EinstaklingarStadirInline
+	]
 
 class BaejatalSveitarfelogGomulAdmin(admin.ModelAdmin):
 	pass
