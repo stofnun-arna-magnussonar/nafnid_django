@@ -1,0 +1,1 @@
+default_app_config = 'vefur_django_admin.apps.VefurDjangoAdminConfig'

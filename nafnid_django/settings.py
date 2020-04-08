@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['localhost', '130.208.178.119', 'nidhoggur.rhi.hi.is']
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nafnid_django_admin',
     'django_admin_listfilter_dropdown',
+    'rest_framework',
+    'vefur_django_admin',
+    'ckeditor',
+    'ckeditor_uploader',
+    'vefur_rest_api',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'nafnid_django.urls'
@@ -123,3 +131,30 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/uploads/')
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
+CKEDITOR_BASEPATH = '/nafnid/static/ckeditor/ckeditor/'
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'basicEntities': True,
+        'entities': False,
+        'allowedContent': True,
+        'fillEmptyBlocks': False,
+        'autoParagraph': False,
+        'removePlugins': 'htmldataprocessor',
+        'protectedSource': [],
+        'contentsCss': 'http://blondal.arnastofnun.is/css/text-styles.css'
+    }
+}
+
+
+# Pagination
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 200
+}
