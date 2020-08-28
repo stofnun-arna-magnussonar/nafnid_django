@@ -74,13 +74,13 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
 		('titill', 'id'),
 		('sysla', 'hreppur'),
 		'texti',
-		'stafraent', 
+		'stafraent',
 		'pappir',
 		'pdf_skra_id'
 	)
 	inlines = [
-		OrnefnaskrarTegundirInline, 
-		OrnefnaskrarStadaInline, 
+		OrnefnaskrarTegundirInline,
+		OrnefnaskrarStadaInline,
 		BaeirOrnefniInline,
 		OrnefnaskrarEinstaklingarInline,
 		OrnefnaskrarOrnefniInline
@@ -89,9 +89,9 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
 	raw_id_fields = ['pdf_skra_id']
 	search_fields = ['titill', 'texti']
 	list_filter = (
-		'stada', 
-		'stafraent', 
-		'pappir', 
+		'stada',
+		'stafraent',
+		'pappir',
 		('sysla', RelatedDropdownFilter),
 		('hreppur', RelatedDropdownFilter)
 	)
