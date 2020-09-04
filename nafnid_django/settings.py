@@ -27,7 +27,7 @@ SECRET_KEY = 'enp9j&-1=wxetwp3(oh&y(%_34&s2qwl5+uik0crdbi%47s9av'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '130.208.178.119', 'nidhoggur.rhi.hi.is']
+ALLOWED_HOSTS = ['localhost', '130.208.178.119', 'nidhoggur.rhi.hi.is', 'nafnid.arnastofnun.is']
 
 
 # Application definition
@@ -126,16 +126,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/nafnid/static/'
+STATIC_URL = '/django-static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-MEDIA_URL = '/media/uploads/'
+MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/uploads/')
 
 CORS_ORIGIN_ALLOW_ALL = True
 
 
-CKEDITOR_BASEPATH = '/nafnid/static/ckeditor/ckeditor/'
+CKEDITOR_BASEPATH = '/django-static/ckeditor/ckeditor/'
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 CKEDITOR_CONFIGS = {
