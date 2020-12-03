@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'vefur_rest_api',
+    'rest_framework_recaptcha',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'nafnid_django.wsgi.application'
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 
 # Database
@@ -129,10 +131,13 @@ USE_TZ = True
 STATIC_URL = '/django-static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-MEDIA_URL = '/uploads/'
+MEDIA_URL = '/media//uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/uploads/')
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Recaptcha key
+DRF_RECAPTCHA_SECRET_KEY = '6LfSlPcZAAAAALuhTE23zeqAkgfoJrto4KF6k1BY'
 
 
 CKEDITOR_BASEPATH = '/django-static/ckeditor/ckeditor/'
