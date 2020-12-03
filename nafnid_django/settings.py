@@ -80,6 +80,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'nafnid_django.wsgi.application'
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 
 # Database
@@ -129,7 +130,7 @@ USE_TZ = True
 STATIC_URL = '/django-static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-MEDIA_URL = '/uploads/'
+MEDIA_URL = '/media//uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/uploads/')
 
 CORS_ORIGIN_ALLOW_ALL = True

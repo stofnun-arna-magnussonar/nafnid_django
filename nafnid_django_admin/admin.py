@@ -10,11 +10,10 @@ def merkja_rett(modeladmin, request, queryset):
 merkja_rett.short_description = "Merkja valin örnefni sem rétt"
 
 
-class OCROrnefniInline(admin.TabularInline):
-    model = OCROrnefni
-    fields = ('ornefni', 'okay', 'lat', 'lon')
-    readonly_fields = ['pdf_skra_id', 'ornefnaskra']
-    raw_id_fields = ['pdf_skra_id', 'ornefnaskra']
+class OrnefniInline(admin.TabularInline):
+    model = Ornefni
+    fields = ('ornefni', 'tvitak', 'okay')
+    ordering = ('ornefni',)
     show_change_link = False
     view_on_site = False
     extra = 0
@@ -23,11 +22,7 @@ class OCROrnefniInline(admin.TabularInline):
 class SkjalSkrarInline(admin.TabularInline):
     model = Ornefnaskrar
     extra = 0
-    show_change_link = True
-    view_on_site = False
-    can_delete = False
     fields = ('id', 'titill', 'stafraent', 'pappir')
-    readonly_fields = ['titill']
 
 
 class PdfSkrarFinnurAdmin(admin.ModelAdmin):
@@ -43,16 +38,19 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
         'hreppur',
         'slod',
         'file_tag',
-        'ocr_text'
+        ('artal_skrar', 'artal_stadfest'),
+        ('rannsakad', 'fjoldi_ornefna', 'ornefni_vantar'),
+        'ocr_text',
     )
     inlines = [
         SkjalSkrarInline,
-        OCROrnefniInline
+        OrnefniInline
     ]
-    readonly_fields = ['file_tag']
-    list_display = ('to_str', 'sysla', 'hreppur')
+    readonly_fields = ['file_tag', 'fjoldi_ornefna']
+    list_display = ('to_str', 'sysla', 'hreppur', 'hastext')
     search_fields = ['slod', 'sysla', 'hreppur', 'ocr_text']
     list_filter = (
+        ('ornefnaskrar__tegund', RelatedDropdownFilter),
         ('bt_sysla', RelatedDropdownFilter),
         ('bt_hreppur', RelatedDropdownFilter),
         ('sysla', DropdownFilter),
@@ -72,6 +70,23 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
         return form
 
 
+class PdfSkrarAdmin(admin.ModelAdmin):
+    def to_str(self, obj):
+        return obj.__str__()
+
+    fields = (
+        'slod',
+        'file_tag',
+        'hastext'
+    )
+    inlines = [
+        OrnefniInline
+    ]
+    readonly_fields = ['file_tag']
+    list_display = ('to_str',)
+    search_fields = ['slod', ]
+
+
 class OrnefnaskrarTegundirInline(admin.TabularInline):
     list_display = ('tegund',)
     readonly_fields = ['id']
@@ -83,6 +98,23 @@ class OrnefnaskrarTegundirInline(admin.TabularInline):
         formset = super(OrnefnaskrarTegundirInline, self).get_formset(request, obj, **kwargs)
         form = formset.form
         widget = form.base_fields['tegund'].widget
+        widget.can_add_related = False
+        widget.can_change_related = True
+        widget.can_delete_related = False
+        return formset
+
+
+class TegundirOrnefnaskrarInline(admin.TabularInline):
+    list_display = ('skra',)
+    readonly_fields = ['id']
+    view_on_site = False
+    extra = 0
+    model = OrnefnaskrarTegundir
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(TegundirOrnefnaskrarInline, self).get_formset(request, obj, **kwargs)
+        form = formset.form
+        widget = form.base_fields['skra'].widget
         widget.can_add_related = False
         widget.can_change_related = True
         widget.can_delete_related = False
@@ -125,7 +157,7 @@ class EinstaklingarStadirInline(admin.TabularInline):
 
 
 class OrnefnaskrarOrnefniInline(admin.TabularInline):
-    list_display = ('ornefni')
+    list_display = ('ornefni',)
     readonly_fields = ['id']
     raw_id_fields = ['ornefni']
     show_change_link = True
@@ -152,9 +184,28 @@ class BaeirOrnefniInline(admin.TabularInline):
         return formset
 
 
+class OrnefnaskrarBaeirInline(admin.TabularInline):
+    list_display = ('ornefnaskra')
+    readonly_fields = ['id']
+    raw_id_fields = ['baer', 'ornefnaskra']
+    show_change_link = True
+    view_on_site = False
+    extra = 0
+    model = BaeirOrnefnaskrar
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(OrnefnaskrarBaeirInline, self).get_formset(request, obj, **kwargs)
+        form = formset.form
+        widget = form.base_fields['ornefnaskra'].widget
+        widget.can_add_related = False
+        widget.can_change_related = True
+        widget.can_delete_related = False
+        return formset
+
+
 class OrnefnaskrarEinstaklingarInline(admin.TabularInline):
-    list_display = ('einstaklingur')
-    raw_id_fields = ['einstaklingur']
+    list_display = ('einstaklingur',)
+    raw_id_fields = ['einstaklingur', 'ornefnaskra']
     show_change_link = True
     view_on_site = False
     extra = 0
@@ -171,8 +222,8 @@ class OrnefnaskrarEinstaklingarInline(admin.TabularInline):
 
 
 class EinstaklingarOrnefnaskrarInline(admin.TabularInline):
-    list_display = ('einstaklingur')
-    raw_id_fields = ['einstaklingur']
+    list_display = ('einstaklingur',)
+    raw_id_fields = ['einstaklingur', 'ornefnaskra']
     show_change_link = True
     view_on_site = False
     extra = 0
@@ -203,7 +254,7 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
         BaeirOrnefniInline,
         OrnefnaskrarEinstaklingarInline,
         # OrnefnaskrarOrnefniInline,
-        OCROrnefniInline
+        OrnefniInline
     ]
     readonly_fields = ['id']
     raw_id_fields = ['pdf_skra_id']
@@ -213,7 +264,7 @@ class OrnefnaskrarAdmin(admin.ModelAdmin):
         'stada',
         'stafraent',
         'pappir',
-	('tegund', RelatedDropdownFilter),
+        ('tegund', RelatedDropdownFilter),
         ('sysla', RelatedDropdownFilter),
         ('hreppur', RelatedDropdownFilter),
     )
@@ -239,11 +290,12 @@ class StadaAdmin(admin.ModelAdmin):
     pass
 
 
-class OrnefniAdmin(admin.ModelAdmin):
+'''class OrnefniAdmin(admin.ModelAdmin):
     pass
+'''
 
 
-class OCROrnefniAdmin(admin.ModelAdmin):
+class OrnefniAdmin(admin.ModelAdmin):
     fields = (
         ('ornefni', 'id'),
         ('lat', 'lon'),
@@ -254,26 +306,44 @@ class OCROrnefniAdmin(admin.ModelAdmin):
     list_filter = ('okay', )
     can_delete = False
     readonly_fields = ['id']
-    raw_id_fields = ['pdf_skra_id']
+    raw_id_fields = ['pdf_skra_id', ]
+    search_fields = ['ornefni']
+    actions = [merkja_rett]
+
+
+class OrnefninAdmin(admin.ModelAdmin):
+    fields = (
+        ('ornefni', 'id'),
+        ('lat', 'lon'),
+        'okay',
+        'pdf_skra_id'
+    )
+    list_editable = ['ornefni', 'okay']
+    list_display = ['id', 'ornefni', 'ornefnaskra', 'finnur', 'okay']
+    list_filter = ('okay', )
+    can_delete = False
+    readonly_fields = ['id']
+    raw_id_fields = ['pdf_skra_id', 'ornefnaskra']
     search_fields = ['ornefni']
     actions = [merkja_rett]
 
 
 class BaejatalBaeirAdmin(admin.ModelAdmin):
-    list_display = ['id', 'baejarnafn', 'nuv_sveitarf', 'gamalt_sveitarf', 'sysla', 'lbs_lykill']
-    list_filter = ['sysla', 'nuv_sveitarf', 'gamalt_sveitarf']
-    search_fields = ['baejarnafn', 'sysla__nafn', 'nuv_sveitarf__nafn', 'gamalt_sveitarf__nafn']
+    list_display = ['id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lbs_lykill', 'hnitsett']
+    list_filter = [('sysla',RelatedDropdownFilter), ('sveitarfelag',RelatedDropdownFilter),('hreppur',RelatedDropdownFilter)]
+    search_fields = ['baejarnafn', 'sysla__nafn', 'sveitarfelag__nafn', 'hreppur__nafn']
     inlines = [
         EinstaklingarStadirInline,
+        OrnefnaskrarBaeirInline
     ]
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(BaejatalBaeirAdmin, self).get_form(request, obj, **kwargs)
-        widget = form.base_fields['nuv_sveitarf'].widget
+        widget = form.base_fields['sveitarfelag'].widget
         widget.can_add_related = False
         widget.can_change_related = True
         widget.can_delete_related = False
-        widget = form.base_fields['gamalt_sveitarf'].widget
+        widget = form.base_fields['hreppur'].widget
         widget.can_add_related = False
         widget.can_change_related = True
         widget.can_delete_related = False
@@ -286,8 +356,9 @@ class BaejatalBaeirAdmin(admin.ModelAdmin):
 
 class EinstaklingarAdmin(admin.ModelAdmin):
     list_display = ['id', 'nafn', 'aukanafn', 'faedingarstadur', 'faedingarar', 'danarar']
-    list_editable = ['nafn', 'nafn', 'aukanafn', 'faedingarstadur', 'faedingarar', 'danarar']
-    search_fields = ['nafn']
+    #list_editable = ['nafn', 'nafn', 'aukanafn', 'faedingarstadur', 'faedingarar', 'danarar']
+    search_fields = ['nafn', 'aukanafn']
+    raw_id_fields = ['stadir']
     inlines = [
         EinstaklingarStadirInline,
         EinstaklingarOrnefnaskrarInline
@@ -325,6 +396,8 @@ class BaejatalSveitarfelogNySyslurInline(admin.TabularInline):
 
 class BaejatalSveitarfelogGomulAdmin(admin.ModelAdmin):
     model = BaejatalSveitarfelogGomul
+    search_fields = ['nafn', ]
+
     inlines = [
         BaejatalBaeirInline
     ]
@@ -332,6 +405,8 @@ class BaejatalSveitarfelogGomulAdmin(admin.ModelAdmin):
 
 class BaejatalSveitarfelogNyAdmin(admin.ModelAdmin):
     model = BaejatalSveitarfelogNy
+    search_fields = ['nafn',]
+
     inlines = [
         BaejatalBaeirInline
     ]
@@ -346,13 +421,15 @@ class BaejatalSyslurAdmin(admin.ModelAdmin):
 
 admin.site.disable_action('delete_selected')
 admin.site.view_on_site = False
+
 admin.site.register(Ornefnaskrar, OrnefnaskrarAdmin)
-admin.site.register(Ornefni, OrnefniAdmin)
+##admin.site.register(Ornefni, OrnefniAdmin)
 admin.site.register(Tegundir, TegundirAdmin)
 admin.site.register(Stada, StadaAdmin)
 admin.site.register(PdfSkrarFinnur, PdfSkrarFinnurAdmin)
+#admin.site.register(PdfSkrarFinnur, PdfSkrarAdmin)
 admin.site.register(Einstaklingar, EinstaklingarAdmin)
-admin.site.register(OCROrnefni, OCROrnefniAdmin)
+admin.site.register(Ornefni, OrnefniAdmin)
 
 admin.site.register(BaejatalBaeir, BaejatalBaeirAdmin)
 admin.site.register(BaejatalSveitarfelogGomul, BaejatalSveitarfelogGomulAdmin)
