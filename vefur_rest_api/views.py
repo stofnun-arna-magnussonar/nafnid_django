@@ -429,7 +429,8 @@ class AbendingarViewSet(viewsets.ReadOnlyModelViewSet):
 				simanumer=request.data['simanumer'],
 				skilabod=request.data['skilabod'],
 				entity_type=request.data['entity_type'],
-				entity_id=request.data['entity_id']
+				entity_id=request.data['entity_id'],
+				entity_name=request.data['entity_name']
 			)
 
 			abending.save(force_insert=True)

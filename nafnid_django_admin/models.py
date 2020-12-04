@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 
 
@@ -518,13 +519,26 @@ class Ornefnapakki(models.Model):
 
 # Ábendingar notenda
 class Abendingar(models.Model):
-    nafn = models.CharField(max_length=250, blank=False, null=False)
-    netfang = models.CharField(max_length=250, blank=False, null=False)
-    simanumer = models.CharField(max_length=50, blank=True, null=True)
-    skilabod = models.TextField(blank=True, null=True)
-    entity_type = models.CharField(max_length=50, blank=True, null=True)
-    entity_id = models.IntegerField(blank=True, null=True)
+	nafn = models.CharField(max_length=250, blank=False, null=False, verbose_name='nafn sendanda')
+	netfang = models.CharField(max_length=250, blank=False, null=False, verbose_name='netfang sendanda')
+	simanumer = models.CharField(max_length=50, blank=True, null=True, verbose_name='símanúmer sendanda')
+	skilabod = models.TextField(blank=True, null=True, verbose_name='skilaboð')
+	entity_type = models.CharField(max_length=50, blank=True, null=True, verbose_name='tegund gagns')
+	entity_id = models.IntegerField(blank=True, null=True, verbose_name='auðkennisnúmer gagns')
+	entity_name = models.TextField(blank=True, null=True, verbose_name='heiti gagns')
+	inserttime = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='dagsetning')
 
-    class Meta:
-        managed = False
-        db_table = 'abendingar'
+	def entity_link(self):
+		return mark_safe('<a href="http://nafnid.arnastofnun.is/%s/%s">%s</a>' % (self.entity_type, self.entity_id, self.entity_name))
+
+	entity_link.short_description = 'Ábendingin varðar'
+	entity_link.allow_tags = True
+
+	def __str__(self):
+		return self.nafn
+
+	class Meta:
+		managed = False
+		db_table = 'abendingar'
+		verbose_name = 'ábending notanda'
+		verbose_name_plural = 'ábendingar notenda'

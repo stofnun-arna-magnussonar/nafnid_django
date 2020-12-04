@@ -418,6 +418,12 @@ class BaejatalSyslurAdmin(admin.ModelAdmin):
         BaejatalSveitarfelogNySyslurInline
     ]
 
+class AbendingarAdmin(admin.ModelAdmin):
+	search_fields = ['nafn', 'netfang', 'skilabod']
+	list_filter = ['inserttime']
+	list_display = 'nafn', 'entity_name', 'inserttime'
+	fields = ('nafn', ('netfang', 'simanumer'), 'skilabod', 'entity_link', 'inserttime')
+	readonly_fields = ('nafn', 'netfang', 'simanumer', 'skilabod', 'entity_link', 'inserttime')
 
 admin.site.disable_action('delete_selected')
 admin.site.view_on_site = False
@@ -435,3 +441,5 @@ admin.site.register(BaejatalBaeir, BaejatalBaeirAdmin)
 admin.site.register(BaejatalSveitarfelogGomul, BaejatalSveitarfelogGomulAdmin)
 admin.site.register(BaejatalSveitarfelogNy, BaejatalSveitarfelogNyAdmin)
 admin.site.register(BaejatalSyslur, BaejatalSyslurAdmin)
+
+admin.site.register(Abendingar, AbendingarAdmin)
