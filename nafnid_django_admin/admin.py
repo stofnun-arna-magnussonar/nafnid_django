@@ -420,10 +420,10 @@ class BaejatalSyslurAdmin(admin.ModelAdmin):
 
 class AbendingarAdmin(admin.ModelAdmin):
 	search_fields = ['nafn', 'netfang', 'skilabod']
-	list_filter = ['inserttime']
-	list_display = 'nafn', 'entity_name', 'inserttime'
-	fields = ('nafn', ('netfang', 'simanumer'), 'skilabod', 'entity_link', 'inserttime')
-	readonly_fields = ('nafn', 'netfang', 'simanumer', 'skilabod', 'entity_link', 'inserttime')
+	list_filter = ['inserttime', 'entity_type']
+	list_display = 'nafn', 'entity_name', 'entity_type', 'inserttime'
+	fields = ('nafn', ('netfang', 'simanumer'), 'skilabod', ('entity_type', 'entity_link'), 'inserttime')
+	readonly_fields = ('nafn', 'netfang', 'simanumer', 'skilabod', 'entity_type', 'entity_link', 'inserttime')
 
 admin.site.disable_action('delete_selected')
 admin.site.view_on_site = False
