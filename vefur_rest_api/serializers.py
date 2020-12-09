@@ -135,7 +135,7 @@ class HreppurBaeirSerializer(serializers.ModelSerializer):
         return [HreppurSerializer(m).data for m in qset]
 
     def get_baeir(self, obj):
-        qset = BaejatalBaeir.objects.filter(hreppur_id=obj.id)
+        qset = BaejatalBaeir.objects.filter(hreppur_id=obj.id).order_by('baejarnafn')
         return [BBaerSerializer(m).data for m in qset]
 
 
@@ -152,7 +152,7 @@ class SveitarfelogBaeirSerializer(serializers.ModelSerializer):
         return [SveitarfelagSerializer(m).data for m in qset]
 
     def get_baeir(self, obj):
-        qset = BaejatalBaeir.objects.filter(sveitarfelag_id=obj.id)
+        qset = BaejatalBaeir.objects.filter(sveitarfelag_id=obj.id).order_by('baejarnafn')
         return [BBaerSerializer(m).data for m in qset]
 
 
@@ -170,7 +170,7 @@ class SyslaHrepparSerializer(serializers.ModelSerializer):
         fields = ('id', 'nafn', 'hreppar')
 
     def get_hreppar(self, obj):
-        return BaejatalSveitarfelogGomulSyslur.objects.filter(sysla=obj.id).select_related('sveitarfelag').values(hreppur=F('sveitarfelag__id'), nafn=F('sveitarfelag__nafn'))
+        return BaejatalSveitarfelogGomulSyslur.objects.filter(sysla=obj.id).select_related('sveitarfelag').values(hreppur=F('sveitarfelag__id'), nafn=F('sveitarfelag__nafn')).order_by('sveitarfelag__nafn')
 
 
 class OrnefnaskrarBaeirSerializer(serializers.ModelSerializer):
@@ -328,13 +328,23 @@ class OrnefnaskrarMinniSerializer(serializers.ModelSerializer):
         fields = ('id', 'titill', 'sveitarfelag', 'hreppur', 'sysla', 'tegund', 'stada', 'baeir',)
 
 
+class OrnefnaskrarMinnstSerializer(serializers.ModelSerializer):
+    tegund = TegundSerializer(many=True, read_only=True)
+    stada = StadaSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Ornefnaskrar
+        #fields = '__all__'
+        fields = ('id', 'titill', 'tegund', 'stada')
+
+
 class TextaleitSerializer(serializers.ModelSerializer):
     pass
 
 
 class EinstaklingarOrnefnaskrarSerializer(serializers.ModelSerializer):
     hlutverk = HlutverkSerializer()
-    ornefnaskra = OrnefnaskrarMinniSerializer()
+    ornefnaskra = OrnefnaskrarMinnstSerializer()
 
     class Meta:
         model = EinstaklingarOrnefnaskrar
@@ -359,15 +369,16 @@ class EinstaklingurSerializer(serializers.ModelSerializer):
 
 
 class OrnefnaskrarEinstaklingsSerializer(serializers.ModelSerializer):
-    ornefnaskrar = serializers.SerializerMethodField()
+    ornefnaskra = serializers.SerializerMethodField()
+    hlutverk = HlutverkSerializer()
 
     class Meta:
-        model = Einstaklingar
-        fields = ('id', 'nafn', 'ornefnaskrar')
+        model = EinstaklingarOrnefnaskrar
+        fields = ('ornefnaskra', 'hlutverk')
 
-    def get_ornefnaskrar(self, obj):
-        qset = OrnefnaskrarEinstaklingar.objects.filter(einstaklingur=obj.id)
-        return [EinstaklingarOrnefnaskrarSerializer(m).data for m in qset]
+    def get_ornefnaskra(self, obj):
+        return Ornefnaskrar.objects.filter(id=obj.ornefnaskra_id).values('id', 'titill')
+
 
 
 class Teg(serializers.RelatedField):
@@ -539,10 +550,10 @@ class SinglePageSerializer(serializers.ModelSerializer):
 
 
 class AbendingarSendSerializer(serializers.ModelSerializer):
-	recaptcha = ReCaptchaField()
+    recaptcha = ReCaptchaField()
 
-	class Meta:
-		model = Abendingar
-		fields = '__all__'
+    class Meta:
+        model = Abendingar
+        fields = '__all__'
 
 ''' =========================== /VEFUR =========================== '''

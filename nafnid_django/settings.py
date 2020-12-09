@@ -150,7 +150,7 @@ CKEDITOR_CONFIGS = {
         'allowedContent': True,
         'fillEmptyBlocks': False,
         'autoParagraph': False,
-        'removePlugins': 'htmldataprocessor',
+        'removePlugins': 'htmldataprocessor, stylescombo',
         'protectedSource': [],
         'contentsCss': 'http://blondal.arnastofnun.is/css/text-styles.css'
     }

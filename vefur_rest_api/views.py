@@ -124,16 +124,9 @@ class Ornefnaleit(viewsets.ReadOnlyModelViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-                queryset = Ornefnapakki.objects.filter(Q(ornefni__regex=reg)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
+                queryset = Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
             else:
-                if m == 'er':
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni_iexact=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
-                elif m == 'endar':
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__iendswith=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
-                elif m == 'byrjar':
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
-                else:
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__contains=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
+                queryset = Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
 
             if tegund:
                 queryset = queryset.filter(Q(ornefnaskra__tegund__id=tegund))
@@ -163,16 +156,9 @@ class Baejaleit(viewsets.ReadOnlyModelViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-                queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__regex=reg)).order_by('baejarnafn')
+                queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).order_by('baejarnafn')
             else:
-                if m == 'byrjar':
-                    queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).order_by('baejarnafn')
-                elif m == 'endar':
-                    queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__iendswith=query)).order_by('baejarnafn')
-                elif m == 'er':
-                    queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__iexact=query)).order_by('baejarnafn')
-                else:
-                    queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__contains=query)).order_by('baejarnafn')
+                queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).order_by('baejarnafn')
 
             if sysla and sveitarfelag:
                 queryset = queryset.filter(Q(sysla__id=sysla) | Q(sveitarfelag__id=sveitarfelag))
@@ -198,61 +184,26 @@ class Siur(ObjectMultipleModelAPIViewSet):
                 reg = query.replace('*', '.*?')
 
                 querylist = [
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__regex=reg)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__regex=reg)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__regex=reg)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__regex=reg)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__regex=reg)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__regex=reg)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__regex=reg)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
                     {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
                 ]
             else:
-
-                if m == 'byrjar':
-                    querylist = [
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
-                        {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
-                    ]
-                elif m == 'endar':
-                    querylist = [
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iendswith=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iendswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iendswith=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iendswith=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iendswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iendswith=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iendswith=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
-                        {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
-                    ]
-                elif m == 'er':
-                    querylist = [
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iexact=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iexact=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iexact=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iexact=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iexact=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iexact=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iexact=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
-                        {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
-                    ]
-                else:
-                    querylist = [
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__contains=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__contains=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                        {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__contains=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__contains=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__contains=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__contains=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                        {'queryset': Ornefnapakki.objects.filter(Q(ornefni__contains=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
-                        {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
-                    ]
+                querylist = [
+                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
+                    {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
+                ]
 
         return querylist
 
@@ -271,16 +222,9 @@ class Uuid(viewsets.ReadOnlyModelViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-                queryset = Ornefnapakki.objects.filter(Q(ornefni__regex=reg)).filter(Q(uuid__isnull=False))
+                queryset = Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).filter(Q(uuid__isnull=False))
             else:
-                if m == 'byrjar':
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).filter(Q(uuid__isnull=False))
-                elif m == 'endar':
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__iendswith=query)).filter(Q(uuid__isnull=False))
-                elif m == 'er':
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__iexact=query)).filter(Q(uuid__isnull=False))
-                else:
-                    queryset = Ornefnapakki.objects.filter(Q(ornefni__contains=query)).filter(Q(uuid__isnull=False))
+                queryset = Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).filter(Q(uuid__isnull=False))
 
             if tegund:
                 queryset = queryset.filter(Q(ornefnaskra__tegund__id=tegund))
@@ -371,7 +315,7 @@ class SyslurViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if self.action == 'list':
-            queryset = BaejatalSyslur.objects.all()
+            queryset = BaejatalSyslur.objects.all().order_by('nafn');
             self.serializer_class = SyslurSerializer
         else:
             pk = self.kwargs['pk']
@@ -393,50 +337,62 @@ class EinstaklingarViewSet(viewsets.ReadOnlyModelViewSet):
             self.serializer_class = EinstaklingurSerializer
         return queryset
 
+
 class OrnefnaskrarEinstaklingsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrnefnaskrarEinstaklingsSerializer
 
     def get_queryset(self):
-        if self.action == 'list':
-            queryset = Einstaklingar.objects.all().order_by('nafn')
-            self.serializer_class = EinstaklingarSerializer
+        query = self.request.query_params.get('id')
+        if query is not None and int(query) > 0:
+            queryset = EinstaklingarOrnefnaskrar.objects.filter(einstaklingur_id=query).all()
         else:
-            pk = self.kwargs['pk']
-            queryset = Einstaklingar.objects.filter(id=pk).all()
-            self.serializer_class = OrnefnaskrarEinstaklingsSerializer
+            queryset = EinstaklingarOrnefnaskrar.objects.all()
+        self.serializer_class = OrnefnaskrarEinstaklingsSerializer
+
         return queryset
+
+class _OrnefnaskrarEinstaklingsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = OrnefnaskrarEinstaklingsSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params.get('id')
+        if query is not None and int(query) > 0:
+            queryset = EinstaklingarOrnefnaskrar.objects.filter(einstaklingur_id=query).all()
+        else:
+            queryset = EinstaklingarOrnefnaskrar.objects.all()
+        self.serializer_class = OrnefnaskrarEinstaklingsSerializer
 
 
 class AbendingarViewSet(viewsets.ReadOnlyModelViewSet):
-	queryset = Abendingar.objects.none()
-	serializer_class = AbendingarSendSerializer
+    queryset = Abendingar.objects.none()
+    serializer_class = AbendingarSendSerializer
 
-	def retrieve(self, request, pk=None):
-		return Response({})
+    def retrieve(self, request, pk=None):
+        return Response({})
 
-	def get_queryset(self):
-		queryset = Abendingar.objects.none()
+    def get_queryset(self):
+        queryset = Abendingar.objects.none()
 
-		return queryset
+        return queryset
 
-	def post(self, request):
-		serializer = AbendingarSendSerializer(data=request.data)
+    def post(self, request):
+        serializer = AbendingarSendSerializer(data=request.data)
 
-		if serializer.is_valid():
-			abending = Abendingar(
-				nafn=request.data['nafn'],
-				netfang=request.data['netfang'],
-				simanumer=request.data['simanumer'],
-				skilabod=request.data['skilabod'],
-				entity_type=request.data['entity_type'],
-				entity_id=request.data['entity_id'],
-				entity_name=request.data['entity_name']
-			)
+        if serializer.is_valid():
+            abending = Abendingar(
+                nafn=request.data['nafn'],
+                netfang=request.data['netfang'],
+                simanumer=request.data['simanumer'],
+                skilabod=request.data['skilabod'],
+                entity_type=request.data['entity_type'],
+                entity_id=request.data['entity_id'],
+                entity_name=request.data['entity_name']
+            )
 
-			abending.save(force_insert=True)
+            abending.save(force_insert=True)
 
-			return Response({
-				'success': 'fyrirspurn send',
-			})
-		else:
-			return Response({'error': 'invalid data'})
+            return Response({
+                'success': 'fyrirspurn send',
+            })
+        else:
+            return Response({'error': 'invalid data'})
