@@ -27,7 +27,7 @@ SECRET_KEY = 'enp9j&-1=wxetwp3(oh&y(%_34&s2qwl5+uik0crdbi%47s9av'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '130.208.178.119', 'nidhoggur.rhi.hi.is', 'nafnid.arnastofnun.is']
+ALLOWED_HOSTS = ['localhost', '130.208.178.119', 'nidhoggur.rhi.hi.is', 'nafnid.arnastofnun.is', 'nafnid.is', 'xn--nafni-mta.is']
 
 
 # Application definition

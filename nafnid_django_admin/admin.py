@@ -40,6 +40,7 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
         'file_tag',
         ('artal_skrar', 'artal_stadfest'),
         ('rannsakad', 'fjoldi_ornefna', 'ornefni_vantar'),
+        ('handrit', 'handrit_orn'),
         'ocr_text',
     )
     inlines = [
@@ -47,9 +48,11 @@ class PdfSkrarFinnurAdmin(admin.ModelAdmin):
         OrnefniInline
     ]
     readonly_fields = ['file_tag', 'fjoldi_ornefna']
-    list_display = ('to_str', 'sysla', 'hreppur', 'hastext')
+    list_display = ('to_str', 'sysla', 'hreppur', 'hastext', 'rannsakad')
     search_fields = ['slod', 'sysla', 'hreppur', 'ocr_text']
     list_filter = (
+        'handrit',
+        'rannsakad',
         ('ornefnaskrar__tegund', RelatedDropdownFilter),
         ('bt_sysla', RelatedDropdownFilter),
         ('bt_hreppur', RelatedDropdownFilter),

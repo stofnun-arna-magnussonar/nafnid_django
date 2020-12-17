@@ -124,9 +124,9 @@ class Ornefnaleit(viewsets.ReadOnlyModelViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-                queryset = Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
+                queryset = Ornefnapakki.objects.filter(Q(samraemt__iregex=r''+reg+'') | Q(ornefni__iregex=r''+reg+'')).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
             else:
-                queryset = Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
+                queryset = Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
 
             if tegund:
                 queryset = queryset.filter(Q(ornefnaskra__tegund__id=tegund))
@@ -156,9 +156,9 @@ class Baejaleit(viewsets.ReadOnlyModelViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-                queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).order_by('baejarnafn')
+                queryset = BaejatalBaeir.objects.filter(Q(samraemt__iregex=r'^'+reg)| Q(baejarnafn__iregex=r'^'+reg)).order_by('baejarnafn')
             else:
-                queryset = BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).order_by('baejarnafn')
+                queryset = BaejatalBaeir.objects.filter(Q(samraemt__istartswith=query) | Q(baejarnafn__istartswith=query)).order_by('baejarnafn')
 
             if sysla and sveitarfelag:
                 queryset = queryset.filter(Q(sysla__id=sysla) | Q(sveitarfelag__id=sveitarfelag))
@@ -182,26 +182,25 @@ class Siur(ObjectMultipleModelAPIViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-
                 querylist = [
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__iregex=reg)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(samraemt__iregex=r'^'+reg) | Q(baejarnafn__iregex=r'^'+reg)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(samraemt__iregex=r'^'+reg) | Q(baejarnafn__iregex=r'^'+reg)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(samraemt__iregex=r'^'+reg) | Q(baejarnafn__iregex=r'^'+reg)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__iregex=r'^'+reg) | Q(ornefni__iregex=r'^'+reg)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__iregex=r'^'+reg) | Q(ornefni__iregex=r'^'+reg)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__iregex=r'^'+reg)| Q(ornefni__iregex=r'^'+reg)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__iregex=r'^'+reg)| Q(ornefni__iregex=r'^'+reg)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
                     {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
                 ]
             else:
                 querylist = [
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
-                    {'queryset': BaejatalBaeir.objects.filter(Q(baejarnafn__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
-                    {'queryset': Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(samraemt__istartswith=query) | Q(baejarnafn__istartswith=query)).distinct('sysla'), 'serializer_class': SiaBaejaleitSyslur, 'label': 'baeir_syslur'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(samraemt__istartswith=query) | Q(baejarnafn__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaBaejaleitSveitarfelog, 'label': 'baeir_sveitarfelog'},
+                    {'queryset': BaejatalBaeir.objects.filter(Q(samraemt__istartswith=query) | Q(baejarnafn__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaBaejaleitHreppar, 'label': 'baeir_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).distinct('sysla'), 'serializer_class': SiaOrnefnaleitSyslur, 'label': 'ornefni_syslur'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).distinct('sveitarfelag'), 'serializer_class': SiaOrnefnaleitSveitarfelog, 'label': 'ornefni_sveitarfelog'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).distinct('hreppur'), 'serializer_class': SiaOrnefnaleitHreppar, 'label': 'ornefni_hreppar'},
+                    {'queryset': Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).distinct('ornefnaskra__tegund').values(tegund=F('ornefnaskra__tegund__tegund'), tegund_id=F('ornefnaskra__tegund__id')), 'serializer_class': SiaOrnefnaleitTegundir, 'label': 'ornefni_tegundir'},
                     {'queryset': Tegundir.objects.all(), 'serializer_class': TegundSerializer, 'label': 'allar_tegundir'}
                 ]
 
@@ -222,9 +221,9 @@ class Uuid(viewsets.ReadOnlyModelViewSet):
         if query is not None:
             if '*' in query:
                 reg = query.replace('*', '.*?')
-                queryset = Ornefnapakki.objects.filter(Q(ornefni__iregex=reg)).filter(Q(uuid__isnull=False))
+                queryset = Ornefnapakki.objects.filter(Q(samraemt__iregex=r'^'+reg) | Q(ornefni__iregex=r'^'+reg)).filter(Q(uuid__isnull=False))
             else:
-                queryset = Ornefnapakki.objects.filter(Q(ornefni__istartswith=query)).filter(Q(uuid__isnull=False))
+                queryset = Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).filter(Q(uuid__isnull=False))
 
             if tegund:
                 queryset = queryset.filter(Q(ornefnaskra__tegund__id=tegund))

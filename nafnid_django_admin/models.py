@@ -170,6 +170,7 @@ class Ornefni(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'ocr_ornefni'
+		ordering = ('ornefni',)
 		verbose_name = 'Ljóslesið örnefni'
 		verbose_name_plural = 'Ljóslesin örnefni'
 
@@ -284,6 +285,7 @@ class PdfSkrarFinnur(models.Model):
 	artal_skrar = models.IntegerField(blank=True, null=True, verbose_name='ártal skrár')
 	artal_stadfest = models.BooleanField(blank=True, null=True, verbose_name='staðfest ártal?')
 	handrit = models.BooleanField(blank=True, null=True, verbose_name='handrit')
+	handrit_orn = models.BooleanField(blank=True, null=True, verbose_name='örnefnaskrá fylgir')
 	rannsakad = models.BooleanField(blank=True, null=True, verbose_name='rannsakað?')
 	ornefni_vantar = models.BooleanField(blank=True, null=True, verbose_name='örnefni vantar')
 
@@ -297,7 +299,7 @@ class PdfSkrarFinnur(models.Model):
 	def file_tag(self):
 		#	<a href="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}">Slóð á skrá</a>
 		map_html = """
-			<embed src="http://nafnid.arnastofnun.is/media/uploads/{0}" width="100%" height="800">
+			<embed src="//nafnid.arnastofnun.is/media/uploads/{0}" width="100%" height="800">
 		"""
 
 		return format_html(map_html,
@@ -308,7 +310,7 @@ class PdfSkrarFinnur(models.Model):
 	file_tag.allow_tags = True
 
 	def pdf_url(self):
-		map_html = 'http://nafnid.arnastofnun.is/media/uploads/{0}'
+		map_html = '//nafnid.arnastofnun.is/media/uploads/{0}'
 		return format_html(map_html,self.slod)
 
 	def __str__(self):
@@ -330,6 +332,7 @@ class PdfSkrarFinnur(models.Model):
 class BaejatalBaeir(models.Model):
 	id = models.AutoField(primary_key=True)
 	baejarnafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='bæjarnafn')
+	samraemt = models.CharField(max_length=85, blank=True, null=True, verbose_name='samræmt')
 	sveitarfelag = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='nuv_sveitarf', verbose_name='núverandi sveitarfélag')
 	hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='gamalt_sveitarf', verbose_name='sveitarfélag (1970)')
 	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla')
@@ -354,6 +357,7 @@ class BaejatalBaeir(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'baejatal_baeir'
+		ordering = ('baejarnafn',)
 		verbose_name = 'bær'
 		verbose_name_plural = 'bæir'
 
@@ -371,6 +375,7 @@ class BaejatalSveitarfelogGomul(models.Model):
 
 	class Meta:
 		managed = False
+		ordering = ('nafn',)
 		db_table = 'baejatal_sveitarfelog_gomul'
 		verbose_name = 'sveitarfélag (1970)'
 		verbose_name_plural = 'sveitarfélög (1970)'
@@ -406,6 +411,7 @@ class BaejatalSyslur(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'baejatal_syslur'
+		ordering = ('nafn',)
 		verbose_name = 'sýsla'
 		verbose_name_plural = 'sýslur'
 
@@ -503,6 +509,7 @@ class EinstaklingarBaeir(models.Model):
 class Ornefnapakki(models.Model):
 	id = models.IntegerField(primary_key=True)
 	ornefni = models.CharField(max_length=250)
+	samraemt = models.CharField(max_length=250)
 	uuid = models.CharField(max_length=250)
 	ornefnaskra = models.ForeignKey(Ornefnaskrar, on_delete=models.DO_NOTHING, db_column='ornefnaskra')
 	baer = models.ForeignKey(BaejatalBaeir, on_delete=models.DO_NOTHING, db_column='baer')
