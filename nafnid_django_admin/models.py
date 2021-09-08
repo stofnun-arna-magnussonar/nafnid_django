@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 
 
@@ -14,6 +13,7 @@ class Ornefnaskrar(models.Model):
 	stafraent = models.BooleanField(blank=True, null=True, verbose_name='stafrænt?')
 	pappir = models.BooleanField(blank=True, null=True, verbose_name='pappír?')
 	pdf_skra_id = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra_id', verbose_name='pdf skrá', blank=True, null=True)
+	artal_skrar = models.IntegerField(blank=True, null=True, verbose_name='ártal skrár')
 	#pdf_skra = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra', verbose_name='pdf skrá', blank=True, null=True)
 
 	tegund = models.ManyToManyField(
@@ -159,6 +159,7 @@ class EinstaklingarOrnefnaskrar(models.Model):
 class Ornefni(models.Model):
 	id = models.AutoField(primary_key=True)
 	ornefni = models.CharField(max_length=300, blank=True, null=True, verbose_name='örnefni')
+	samraemt = models.CharField(max_length=300, blank=True, null=True, verbose_name='samræmt')
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá', blank=True, null=True, related_name='skra')
 	pdf_skra_id = models.ForeignKey('PdfSkrarFinnur', models.DO_NOTHING, db_column='pdf_skra_id', verbose_name='PDF skrá', blank=True, null=True)
 	lat = models.FloatField(blank=True, null=True)
@@ -299,7 +300,7 @@ class PdfSkrarFinnur(models.Model):
 	def file_tag(self):
 		#	<a href="http://nidhoggur.rhi.hi.is/nafnid-media/uploads/{0}">Slóð á skrá</a>
 		map_html = """
-			<embed src="//nafnid.arnastofnun.is/media/uploads/{0}" width="100%" height="800">
+			<embed src="https://nafnid.arnastofnun.is/media/uploads/{0}" width="100%" height="800">
 		"""
 
 		return format_html(map_html,
@@ -310,7 +311,7 @@ class PdfSkrarFinnur(models.Model):
 	file_tag.allow_tags = True
 
 	def pdf_url(self):
-		map_html = '//nafnid.arnastofnun.is/media/uploads/{0}'
+		map_html = 'https://nafnid.arnastofnun.is/media/uploads/{0}'
 		return format_html(map_html,self.slod)
 
 	def __str__(self):
@@ -357,7 +358,7 @@ class BaejatalBaeir(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'baejatal_baeir'
-		ordering = ('baejarnafn',)
+		#ordering = ('baejarnafn',)
 		verbose_name = 'bær'
 		verbose_name_plural = 'bæir'
 
@@ -410,8 +411,8 @@ class BaejatalSyslur(models.Model):
 
 	class Meta:
 		managed = False
+		#ordering = ('nafn',)
 		db_table = 'baejatal_syslur'
-		ordering = ('nafn',)
 		verbose_name = 'sýsla'
 		verbose_name_plural = 'sýslur'
 
@@ -516,6 +517,7 @@ class Ornefnapakki(models.Model):
 	hreppur = models.ForeignKey(BaejatalSveitarfelogGomul, on_delete=models.DO_NOTHING, db_column='hreppur')
 	sveitarfelag = models.ForeignKey(BaejatalSveitarfelogNy, on_delete=models.DO_NOTHING, db_column='sveitarfelag')
 	sysla = models.ForeignKey(BaejatalSyslur, on_delete=models.DO_NOTHING, db_column='sysla')
+	artal_skrar = models.IntegerField(blank=True, null=True, verbose_name='ártal skrár')
 
 	def __str__(self):
 		return self.ornefni
@@ -523,6 +525,8 @@ class Ornefnapakki(models.Model):
 	class Meta:
 		managed = False
 		db_table = 'ornefnapakki'
+		#ordering = ('ornefni',)
+
 
 # Ábendingar notenda
 class Abendingar(models.Model):
@@ -536,7 +540,7 @@ class Abendingar(models.Model):
 	inserttime = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='dagsetning')
 
 	def entity_link(self):
-		return mark_safe('<a href="http://nafnid.arnastofnun.is/%s/%s">%s</a>' % (self.entity_type, self.entity_id, self.entity_name))
+		return mark_safe('<a href="https://nafnid.arnastofnun.is/%s/%s">%s</a>' % (self.entity_type, self.entity_id, self.entity_name))
 
 	entity_link.short_description = 'Ábendingin varðar'
 	entity_link.allow_tags = True
