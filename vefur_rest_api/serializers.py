@@ -324,7 +324,7 @@ class OrnefnaskrarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ornefnaskrar
-        fields = ('id', 'texti', 'stafraent', 'pappir', 'titill', 'hreppur', 'sveitarfelag', 'sysla', 'pdf', 'pdf_skra_id', 'tegund', 'stada', 'ornefni', 'baeir', 'einstaklingar','artal',)
+        fields = ('id',  'lmi', 'fjoldi_ornefna', 'texti', 'stafraent', 'pappir', 'titill', 'hreppur', 'sveitarfelag', 'sysla', 'pdf', 'pdf_skra_id', 'tegund', 'stada', 'ornefni', 'baeir', 'einstaklingar','artal',)
 
     def get_einstaklingar(self, obj):
         qset = OrnefnaskrarEinstaklingar.objects.filter(ornefnaskra=obj.id)
