@@ -81,8 +81,6 @@ class Ornefnaskrar(models.Model):
 			m = m + ds[i] * salt[i]
 		return "//atlas.lmi.is/ornefnaritill/?nafnid="+str(self.id)+"&var="+str(m)
 
-
-
 class OrnefnaskrarBaeir(models.Model):
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
 	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, db_column='baer', verbose_name='bær')
