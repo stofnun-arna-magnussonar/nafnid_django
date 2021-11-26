@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'vefur_rest_api',
     'rest_framework_recaptcha',
+    'api',
 ]
 
 MIDDLEWARE = [

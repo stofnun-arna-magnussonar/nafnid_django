@@ -20,4 +20,5 @@ urlpatterns = [
     url('admin/', admin.site.urls),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^vefur/api/', include(('vefur_rest_api.urls', 'vefur_rest_api'), namespace='vefur_rest_api')),
+    url(r'^api/', include(('api.urls', 'api'), namespace='api')),
 ]

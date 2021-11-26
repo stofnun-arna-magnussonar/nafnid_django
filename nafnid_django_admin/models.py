@@ -73,6 +73,15 @@ class Ornefnaskrar(models.Model):
 
 	fjoldi_ornefna.short_description = 'fjöldi örnefna'
 
+	def lmi(self):
+		salt = [82, 2, 76, 23, 42, 31, 25, 12, 52, 15, 56, 54, 18, 4, 70, 97, 57, 35, 78, 88, 60, 40, 51, 11, 58, 20, 85, 1, 89, 5, 7, 14]
+		m = 0
+		ds = str.encode(str(self.id))
+		for i in range(min(len(str(self.id)), len(salt))):
+			m = m + ds[i] * salt[i]
+		return "//atlas.lmi.is/ornefnaritill/?nafnid="+str(self.id)+"&var="+str(m)
+
+
 
 class OrnefnaskrarBaeir(models.Model):
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
