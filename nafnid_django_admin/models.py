@@ -2,6 +2,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 
 class Ornefnaskrar(models.Model):
@@ -336,14 +337,27 @@ class PdfSkrarFinnur(models.Model):
 		verbose_name = 'pdf skrá'
 		verbose_name_plural = 'pdf skrár'
 
+class BaejatalTegund(models.Model):
+	tegund = models.CharField(max_length=300, blank=False, null=False, verbose_name='tegund')
+
+	def __str__(self):
+		return self.tegund
+
+	class Meta:
+		managed = False
+		db_table = 'baejatal_tegund'
+		verbose_name = 'tegund svæðis'
+		verbose_name_plural = 'tegundir svæða'
+		ordering = ['tegund']
 
 class BaejatalBaeir(models.Model):
 	id = models.AutoField(primary_key=True)
-	baejarnafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='bæjarnafn')
+	baejarnafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='heiti')
 	samraemt = models.CharField(max_length=85, blank=True, null=True, verbose_name='samræmt')
 	sveitarfelag = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='nuv_sveitarf', verbose_name='núverandi sveitarfélag')
 	hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='gamalt_sveitarf', verbose_name='sveitarfélag (1970)')
 	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla')
+	tegund = models.ForeignKey('BaejatalTegund', models.DO_NOTHING, null=True, blank=True)
 	lbs_lykill = models.CharField(max_length=50, blank=True, null=True, verbose_name='lykill landsbókasafns')
 	lat = models.FloatField(blank=True, null=True)
 	lng = models.FloatField(blank=True, null=True)
@@ -366,8 +380,8 @@ class BaejatalBaeir(models.Model):
 		managed = False
 		db_table = 'baejatal_baeir'
 		#ordering = ('baejarnafn',)
-		verbose_name = 'bær'
-		verbose_name_plural = 'bæir'
+		verbose_name = 'svæði'
+		verbose_name_plural = 'svæði'
 
 	def get_absolute_url(self):
 		return reverse('baer_detail', args=[str(self.id)])
@@ -560,3 +574,23 @@ class Abendingar(models.Model):
 		db_table = 'abendingar'
 		verbose_name = 'ábending notanda'
 		verbose_name_plural = 'ábendingar notenda'
+
+class Frumskraning(models.Model):
+	fjoldi_skjala = models.IntegerField(blank=True, null=True, verbose_name='fjöldi skjala')
+	athugasemd = models.TextField(blank=True, null=True, verbose_name='athugasemd')
+	dagsetning_fra = models.CharField(max_length=100, blank=True, null=True, verbose_name='dagsetning frá', help_text='yyyy-mm-dd')
+	dagsetning_til = models.CharField(max_length=100, blank=True, null=True, verbose_name='dagsetning til', help_text='yyyy-mm-dd')
+
+	sveitarfelag_nuv = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, blank=True, null=True, verbose_name='núverandi sveitarfélag')
+	sveitarfelag_gamalt = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, blank=True, null=True, verbose_name='sveitarfélag (1970)')
+	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, blank=True, null=True, verbose_name='sýsla')
+	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, blank=True, null=True, verbose_name='svæði')
+
+	def __str__(self):
+		return str(self.baer) if self.baer is not None else self.sveitarfelag_nuv.nafn if self.sveitarfelag_nuv is not None else self.sveitarfelag_gamalt.nafn if self.sveitarfelag_gamalt is not None else '-'
+
+	class Meta:
+		managed = False
+		db_table = 'frumskraning'
+		verbose_name = 'frumskráning'
+		verbose_name_plural = 'frumskráningar'
