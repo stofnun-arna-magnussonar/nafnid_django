@@ -439,11 +439,36 @@ class FrumskraningAdmin(admin.ModelAdmin):
 		('sveitarfelag_gamalt', 'sveitarfelag_nuv'),
 		('baer', ),
 		'athugasemd',
-		'fjoldi_skjala',
+		('fjoldi_skjala', 'myndagogn'),
 		('dagsetning_fra', 'dagsetning_til')
 	)
 	#raw_id_fields = ['baer']
 	autocomplete_fields = ['sysla', 'sveitarfelag_gamalt', 'sveitarfelag_nuv', 'baer']
+
+	def get_form(self, request, obj=None, **kwargs):
+		form = super(FrumskraningAdmin, self).get_form(request, obj, **kwargs)
+
+		widget = form.base_fields['sysla'].widget
+		widget.can_add_related = False
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		widget = form.base_fields['sveitarfelag_gamalt'].widget
+		widget.can_add_related = True
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		widget = form.base_fields['sveitarfelag_nuv'].widget
+		widget.can_add_related = True
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		widget = form.base_fields['baer'].widget
+		widget.can_add_related = True
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		return form
 
 admin.site.disable_action('delete_selected')
 admin.site.view_on_site = False

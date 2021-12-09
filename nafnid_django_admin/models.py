@@ -585,6 +585,7 @@ class Frumskraning(models.Model):
 	sveitarfelag_gamalt = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, blank=True, null=True, verbose_name='sveitarfélag (1970)')
 	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, blank=True, null=True, verbose_name='sýsla')
 	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, blank=True, null=True, verbose_name='svæði')
+	myndagogn = models.BooleanField(blank=False, null=False, default=False, verbose_name='myndagögn?')
 
 	def __str__(self):
 		return str(self.baer) if self.baer is not None else self.sveitarfelag_nuv.nafn if self.sveitarfelag_nuv is not None else self.sveitarfelag_gamalt.nafn if self.sveitarfelag_gamalt is not None else '-'
