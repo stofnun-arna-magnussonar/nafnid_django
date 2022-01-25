@@ -431,7 +431,7 @@ class AbendingarAdmin(admin.ModelAdmin):
 
 class FrumskraningarBaeirInline(admin.TabularInline):
 	model = FrumskraningarBaeir
-	raw_id_fields = ['baer']
+	autocomplete_fields = ['baer']
 
 class FrumskraningAdmin(admin.ModelAdmin):
 	list_filter = ['sysla', 'sveitarfelag_nuv', 'sveitarfelag_gamalt']
