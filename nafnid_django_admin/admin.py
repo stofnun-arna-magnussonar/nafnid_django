@@ -429,6 +429,10 @@ class AbendingarAdmin(admin.ModelAdmin):
 	fields = ('nafn', ('netfang', 'simanumer'), 'skilabod', 'entity_type', 'entity_link', 'inserttime')
 	readonly_fields = ('nafn', 'netfang', 'simanumer', 'skilabod', 'entity_type', 'entity_link', 'inserttime')
 
+class FrumskraningarBaeirInline(admin.TabularInline):
+	model = FrumskraningarBaeir
+	raw_id_fields = ['baer']
+
 class FrumskraningAdmin(admin.ModelAdmin):
 	list_filter = ['sysla', 'sveitarfelag_nuv', 'sveitarfelag_gamalt']
 	search_fields = ['baer']
@@ -444,6 +448,7 @@ class FrumskraningAdmin(admin.ModelAdmin):
 	)
 	#raw_id_fields = ['baer']
 	autocomplete_fields = ['sysla', 'sveitarfelag_gamalt', 'sveitarfelag_nuv', 'baer']
+	inlines = [FrumskraningarBaeirInline]
 
 	def get_form(self, request, obj=None, **kwargs):
 		form = super(FrumskraningAdmin, self).get_form(request, obj, **kwargs)

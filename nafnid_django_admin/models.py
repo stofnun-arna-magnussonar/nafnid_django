@@ -595,3 +595,13 @@ class Frumskraning(models.Model):
 		db_table = 'frumskraning'
 		verbose_name = 'frumskráning'
 		verbose_name_plural = 'frumskráningar'
+
+class FrumskraningarBaeir(models.Model):
+	baer = models.ForeignKey(BaejatalBaeir, on_delete=models.CASCADE, verbose_name='bær')
+	frumskraning = models.ForeignKey(Frumskraning, on_delete=models.CASCADE, verbose_name='frumskráning')
+
+	class Meta:
+		managed = False
+		db_table = 'frumskraningar_baer'
+		verbose_name = 'tengdur bær/svæði'
+		verbose_name_plural = 'aðrir tengir bæir/svæði'
