@@ -425,8 +425,8 @@ class BaejatalSyslurAdmin(admin.ModelAdmin):
 class AbendingarAdmin(admin.ModelAdmin):
 	search_fields = ['nafn', 'netfang', 'skilabod']
 	list_filter = ['inserttime', 'entity_type']
-	list_display = 'nafn', 'entity_name', 'entity_type', 'inserttime'
-	fields = ('nafn', ('netfang', 'simanumer'), 'skilabod', 'entity_type', 'entity_link', 'inserttime')
+	list_display = 'nafn', 'entity_name', 'entity_type', 'inserttime', 'afgreitt'
+	fields = ('nafn', ('netfang', 'simanumer'), 'skilabod', 'entity_type', 'entity_link', 'inserttime','afgreitt')
 	readonly_fields = ('nafn', 'netfang', 'simanumer', 'skilabod', 'entity_type', 'entity_link', 'inserttime')
 
 class FrumskraningarBaeirInline(admin.TabularInline):
@@ -434,7 +434,7 @@ class FrumskraningarBaeirInline(admin.TabularInline):
 	autocomplete_fields = ['baer']
 
 class FrumskraningAdmin(admin.ModelAdmin):
-	list_filter = ['sysla', 'sveitarfelag_nuv', 'sveitarfelag_gamalt']
+	list_filter = ['myndagogn', 'sysla', 'sveitarfelag_nuv', 'sveitarfelag_gamalt']
 	search_fields = ['baer']
 	list_display = ['id', '__str__', 'sveitarfelag_nuv', 'sveitarfelag_gamalt', 'fjoldi_skjala']
 	list_display_links = ['id', '__str__']

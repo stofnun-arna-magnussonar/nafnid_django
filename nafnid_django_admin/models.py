@@ -123,7 +123,7 @@ class OrnefnaskrarEinstaklingar(models.Model):
 	einstaklingur = models.ForeignKey('Einstaklingar', models.DO_NOTHING, db_column='einstaklingur', verbose_name='einstaklingur')
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
 	#hlutverk = models.CharField(max_length=200, blank=True, null=True, verbose_name='hlutverk', choices=[('skrasetjari', 'Skrásetjari'), ('heimildamadur', 'Heimildamaður'), ('starfsmadur', 'Starfsmaður Örnefnastofnunar'), ('kortagerð', 'Kortagerð')])
-	hlutverk = models.ForeignKey('Hlutverk', models.DO_NOTHING, db_column='hlutv')
+	hlutverk = models.ForeignKey('Hlutverk', models.DO_NOTHING, db_column='hlutv', blank=True, null=True)
 
 	class Meta:
 		managed = False
@@ -146,7 +146,10 @@ class EinstaklingarOrnefnaskrar(models.Model):
 		verbose_name_plural = 'örnefnaskrár'
 
 	def __str__(self):
-		return self.hlutverk.hlutverk
+		try:
+			return self.hlutverk.hlutverk
+		except:
+			return '-'
 
 
 '''class Ornefni(models.Model):
@@ -354,8 +357,8 @@ class BaejatalBaeir(models.Model):
 	id = models.AutoField(primary_key=True)
 	baejarnafn = models.CharField(max_length=85, blank=True, null=True, verbose_name='heiti')
 	samraemt = models.CharField(max_length=85, blank=True, null=True, verbose_name='samræmt')
-	sveitarfelag = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='nuv_sveitarf', verbose_name='núverandi sveitarfélag')
-	hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='gamalt_sveitarf', verbose_name='sveitarfélag (1970)')
+	sveitarfelag = models.ForeignKey('BaejatalSveitarfelogNy', models.DO_NOTHING, db_column='nuv_sveitarf', verbose_name='núverandi sveitarfélag', blank=True, null=True)
+	hreppur = models.ForeignKey('BaejatalSveitarfelogGomul', models.DO_NOTHING, db_column='gamalt_sveitarf', verbose_name='sveitarfélag (1970)', blank=True, null=True)
 	sysla = models.ForeignKey('BaejatalSyslur', models.DO_NOTHING, db_column='sysla', verbose_name='sýsla')
 	tegund = models.ForeignKey('BaejatalTegund', models.DO_NOTHING, null=True, blank=True)
 	lbs_lykill = models.CharField(max_length=50, blank=True, null=True, verbose_name='lykill landsbókasafns')
@@ -559,6 +562,7 @@ class Abendingar(models.Model):
 	entity_id = models.IntegerField(blank=True, null=True, verbose_name='auðkennisnúmer gagns')
 	entity_name = models.TextField(blank=True, null=True, verbose_name='heiti gagns')
 	inserttime = models.DateTimeField(auto_now_add=True, blank=True, verbose_name='dagsetning')
+	afgreitt = models.BooleanField(verbose_name='afgreitt')
 
 	def entity_link(self):
 		return mark_safe('<a href="https://nafnid.arnastofnun.is/%s/%s">%s</a>' % (self.entity_type, self.entity_id, self.entity_name))
