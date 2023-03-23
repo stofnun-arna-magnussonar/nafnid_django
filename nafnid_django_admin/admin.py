@@ -339,6 +339,17 @@ class BaejatalBaeirAdmin(admin.ModelAdmin):
 		EinstaklingarStadirInline,
 		OrnefnaskrarBaeirInline
 	]
+	fields = (
+		'baejarnafn',
+		'samraemt',
+		('sveitarfelag', 'hreppur'),
+		'sysla',
+		'tegund',
+		'lbs_lykill',
+		('lat', 'lng'),
+		'map_tag'
+	)
+	readonly_fields = ['map_tag']
 
 	def get_form(self, request, obj=None, **kwargs):
 		form = super(BaejatalBaeirAdmin, self).get_form(request, obj, **kwargs)

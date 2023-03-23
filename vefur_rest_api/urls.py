@@ -10,6 +10,7 @@ router.register(r'front_sections', views.ForsiduhlutarViewSet, basename='front_s
 
 router.register(r'oleit', views.Ornefnaleit, basename='oleit')
 router.register(r'bleit', views.Baejaleit, basename='bleit')
+router.register(r'geoleit', views.GeoleitView, basename='geoleit')
 router.register(r'textaleit', views.Textaleit, basename='textaleit')
 
 

@@ -84,19 +84,19 @@ class Ornefnaskrar(models.Model):
 
 class OrnefnaskrarBaeir(models.Model):
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
-	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, db_column='baer', verbose_name='bær')
+	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, db_column='baer', verbose_name='svæði')
 	tegund = models.CharField(max_length=100, blank=True, null=True, verbose_name='tegund')
 
 	class Meta:
 		managed = False
 		db_table = 'ornefnaskrar_baeir'
-		verbose_name = 'bær'
-		verbose_name_plural = 'bæir'
+		verbose_name = 'svæði'
+		verbose_name_plural = 'svæði'
 
 
 class BaeirOrnefnaskrar(models.Model):
 	ornefnaskra = models.ForeignKey('Ornefnaskrar', models.DO_NOTHING, db_column='ornefnaskra', verbose_name='örnefnaskrá')
-	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, db_column='baer', verbose_name='bær')
+	baer = models.ForeignKey('BaejatalBaeir', models.DO_NOTHING, db_column='baer', verbose_name='svæði')
 	tegund = models.CharField(max_length=100, blank=True, null=True, verbose_name='tegund')
 
 	class Meta:
@@ -379,6 +379,84 @@ class BaejatalBaeir(models.Model):
 	def fjoldi_skjala(self):
 		return OrnefnaskrarBaeir.objects.filter(baer=self.pk).count()
 
+	def map_tag(self):
+		map_html = """
+			<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+			<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+			<div id="admin_place_map" style="width: 100%; height: 600px;"></div>
+			<div class="form-row field-url">
+				<div>
+					<label for="geocode_input">Leita að heimilsfangi:</label>
+					<input type="text" class="vTextField" maxlength="300" id="geocode_input" value="">
+				</div>
+				<div id="geocode_results" style="margin-top: 10px"></div>
+			</div>
+			<script type="text/javascript">
+				var updateLatLng = function(lat, lng) {{
+					if (!django_isf_marker) {{
+						django_isf_marker = L.marker([lat, lng]); // Lägger till en L.marker
+						django_isf_marker.addTo(django_isf_map);
+					}}
+					django_isf_marker.setLatLng([lat, lng]);
+					django.jQuery('#id_lat').val(parseFloat(lat).toFixed(6)); // Skriver e.latlng.lat från punkter var man klickade på kartan till "lat" fältet
+					django.jQuery('#id_lng').val(parseFloat(lng).toFixed(6)); // Skriver e.latlng.lng från punkter var man klickade på kartan till "lng" fältet
+				}};
+				var django_isf_map = L.map("admin_place_map").setView([({0} > 0 ? {0} : 64.963051), ({1} > 0 ? {1} : -19.020836)], 6); // Skapar en karta
+				L.tileLayer("http://{{s}}.tile.osm.org/{{z}}/{{x}}/{{y}}.png", {{attribution: "&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"}}).addTo(django_isf_map);
+				var django_isf_marker;
+				if ({0} != 0 && {1} != 0) {{
+					django_isf_marker = L.marker([{0}, {1}]); // Lägger till en L.marker
+					django_isf_marker.addTo(django_isf_map);
+					django_isf_map.setView(django_isf_marker.getLatLng());
+				}}
+				django_isf_map.on('click', function(e) {{ // Map click handler
+					updateLatLng(e.latlng.lat, e.latlng.lng);
+				}});
+				setTimeout(function() {{
+					django_isf_map.invalidateSize();
+				}}, 200);
+				django.jQuery('#geocode_input').keypress(function(event) {{
+					if (event.keyCode == 13) {{
+						event.preventDefault();
+						django.jQuery.getJSON('https://nominatim.openstreetmap.org/search?q='+django.jQuery('#geocode_input').val()+'&format=json', function(data) {{
+							django.jQuery('#geocode_results').html('');
+
+							if (data && data.length > 0) {{
+								data.forEach(function(item) {{
+									var listItem = django.jQuery('<a/>', {{
+										text: item.display_name,
+										style: 'display: block; margin-bottom: 5px;',
+										href: '#'
+									}});
+
+									listItem.click(function(event) {{
+										event.preventDefault();
+
+										updateLatLng(item.lat, item.lon);
+										django_isf_map.setView([item.lat, item.lon], 6);
+									}})
+									django.jQuery('#geocode_results').append(listItem);
+								}});
+							}}
+						}});
+					}}
+				}});
+			</script>
+		"""
+
+
+
+		lat = str(self.lat) if self.lat is not None else '0'
+		lng = str(self.lng) if self.lat is not None else '0'
+
+		formatted = map_html.format(lat, lng)
+
+		return mark_safe(formatted)
+		#return mark_safe(map_html % lat, lat, lng, lng, lat, lng, lat, lng)
+
+	map_tag.short_description = 'Kort'
+	map_tag.allow_tags = True
+
 	class Meta:
 		managed = False
 		db_table = 'baejatal_baeir'
@@ -601,7 +679,7 @@ class Frumskraning(models.Model):
 		verbose_name_plural = 'frumskráningar'
 
 class FrumskraningarBaeir(models.Model):
-	baer = models.ForeignKey(BaejatalBaeir, on_delete=models.CASCADE, verbose_name='bær')
+	baer = models.ForeignKey(BaejatalBaeir, on_delete=models.CASCADE, verbose_name='svæði')
 	frumskraning = models.ForeignKey(Frumskraning, on_delete=models.CASCADE, verbose_name='frumskráning')
 
 	class Meta:
@@ -609,3 +687,22 @@ class FrumskraningarBaeir(models.Model):
 		db_table = 'frumskraningar_baer'
 		verbose_name = 'tengdur bær/svæði'
 		verbose_name_plural = 'aðrir tengir bæir/svæði'
+
+class Geoleit(models.Model):
+	type = models.TextField(blank=True, null=True)
+	name = models.CharField(max_length=255, blank=True, null=True)
+	baer_id = models.IntegerField(blank=True, null=True)
+	baer_name = models.CharField(max_length=255, blank=True, null=True)
+	ornefnaskra = models.IntegerField(blank=True, null=True)
+	hreppur_id = models.IntegerField(blank=True, null=True)
+	hreppur = models.CharField(max_length=255, blank=True, null=True)
+	sysla_id = models.IntegerField(blank=True, null=True)
+	sysla = models.CharField(max_length=255, blank=True, null=True)
+	tegund = models.CharField(max_length=255, blank=True, null=True)
+	tegund_id = models.IntegerField(blank=True, null=True)
+	lat = models.FloatField(blank=True, null=True)
+	lng = models.FloatField(blank=True, null=True)
+
+	class Meta:
+		managed = False  # Created from a view. Don't remove.
+		db_table = 'geoleit'
