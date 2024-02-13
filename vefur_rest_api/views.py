@@ -424,3 +424,26 @@ class AbendingarViewSet(viewsets.ReadOnlyModelViewSet):
 			})
 		else:
 			return Response({'error': 'invalid data'})
+
+
+class ArticlesViewSet(viewsets.ReadOnlyModelViewSet):
+	serializer_class = ArticleListSerializer
+
+	def get_serializer_class(self):
+		if self.action == 'list':
+			return ArticleListSerializer
+		else:
+			return ArticleSingleSerializer
+
+	def get_queryset(self):
+		queryset = Articles.objects.all()
+
+		author = self.request.query_params.get('author', None)
+		if author is not None:
+			queryset = queryset.filter(article_author__id=author)
+
+		baer = self.request.query_params.get('baer', None)
+		if baer is not None:
+			queryset = queryset.filter(articlesbaeir__baeir__id=baer)
+
+		return queryset

@@ -486,6 +486,64 @@ class FrumskraningAdmin(admin.ModelAdmin):
 
 		return form
 
+class GrunngognAdmin(admin.ModelAdmin):
+	list_filter = ['myndagogn', 'sysla', 'sveitarfelag_nuv', 'sveitarfelag_gamalt']
+	search_fields = ['baer']
+	list_display = ['id', '__str__', 'sveitarfelag_nuv', 'sveitarfelag_gamalt']
+	list_display_links = ['id', '__str__']
+	fields = (
+		'sysla',
+		('sveitarfelag_gamalt', 'sveitarfelag_nuv'),
+		('baer', ),
+		'athugasemd',
+		('frumskraning', 'myndagogn'),
+		('dagsetning_fra', 'dagsetning_til')
+	)
+	raw_id_fields = ['frumskraning']
+	autocomplete_fields = ['sysla', 'sveitarfelag_gamalt', 'sveitarfelag_nuv', 'baer']
+	#inlines = [FrumskraningarBaeirInline]
+
+	def get_form(self, request, obj=None, **kwargs):
+		form = super(GrunngognAdmin, self).get_form(request, obj, **kwargs)
+
+		widget = form.base_fields['sysla'].widget
+		widget.can_add_related = False
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		widget = form.base_fields['sveitarfelag_gamalt'].widget
+		widget.can_add_related = True
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		widget = form.base_fields['sveitarfelag_nuv'].widget
+		widget.can_add_related = True
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		widget = form.base_fields['baer'].widget
+		widget.can_add_related = True
+		widget.can_change_related = False
+		widget.can_delete_related = False
+
+		return form
+
+class ArticleBaeirInline(admin.TabularInline):
+	model = ArticlesBaeir
+	raw_id_fields = ['baeir']
+	extra = 1
+
+class ArticlesAuthorsInline(admin.TabularInline):
+	model = ArticlesAuthors
+	raw_id_fields = ['einstaklingar']
+	extra = 1
+
+class ArticlesAdmin(admin.ModelAdmin):
+	list_display = ['id', 'title', 'article_collection']
+	list_display_links = ['id', 'title']
+	inlines = [ArticleBaeirInline, ArticlesAuthorsInline]
+	
+
 admin.site.disable_action('delete_selected')
 admin.site.view_on_site = False
 
@@ -505,5 +563,7 @@ admin.site.register(BaejatalSyslur, BaejatalSyslurAdmin)
 admin.site.register(BaejatalTegund)
 
 admin.site.register(Frumskraning, FrumskraningAdmin)
+admin.site.register(Grunngogn, GrunngognAdmin)
 
 admin.site.register(Abendingar, AbendingarAdmin)
+admin.site.register(Articles, ArticlesAdmin)

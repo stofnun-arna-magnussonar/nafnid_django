@@ -28,6 +28,8 @@ router.register(r'hreppar', views.HrepparViewSet, basename='hreppar')
 router.register(r'sveitarfelog', views.SveitarfelogViewSet, basename='sveitarfelog')
 router.register(r'syslur', views.SyslurViewSet, basename='syslur')
 
+router.register(r'greinar', views.ArticlesViewSet, basename='greinar')
+
 router.register(r'abending', views.AbendingarViewSet, basename='abending')
 
 urlpatterns = [

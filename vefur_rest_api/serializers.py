@@ -88,6 +88,41 @@ class BaejatalTegundSerializer(serializers.ModelSerializer):
 		model = BaejatalTegund
 		fields = ('id', 'tegund')
 
+
+class EinstaklingarSerializer(serializers.ModelSerializer):
+	stadir = serializers.SerializerMethodField()
+
+	class Meta:
+		model = Einstaklingar
+		fields = ('id', 'nafn', 'faedingarar', 'aukanafn', 'faedingarstadur', 'danarar', 'heimili','stadir')
+
+	def get_stadir(self, obj):
+		qset = EinstaklingarBaeir.objects.filter(einstaklingur=obj.id)
+		return [EinstaklingarBaeirSerializer(m).data for m in qset]
+
+class ArticleCollectionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ArticleCollections
+		fields = ('id', 'name')
+
+class ArticleSerializer(serializers.ModelSerializer):
+	authors = EinstaklingarSerializer(many=True)
+	article_collection = ArticleCollectionSerializer()
+
+	class Meta:
+		model = Articles
+		fields = ('id', 'title', 'article_collection', 'authors')
+
+
+
+class ArticlesBaeirSerializer(serializers.ModelSerializer):
+	article = ArticleSerializer()
+
+	class Meta:
+		model = ArticlesBaeir
+		fields = ('article',)
+
+
 class BaerSerializer(serializers.ModelSerializer):
 	hreppur = HreppurSerializer(many=False, read_only=True)
 	sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
@@ -95,10 +130,11 @@ class BaerSerializer(serializers.ModelSerializer):
 	skrar = serializers.SerializerMethodField()
 	ornefni = serializers.SerializerMethodField()
 	tegund = BaejatalTegundSerializer()
+	greinar = ArticlesBaeirSerializer(many=True)
 
 	class Meta:
 		model = BaejatalBaeir
-		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lat', 'lng', 'lbs_lykill', 'skrar', 'ornefni', 'tegund')
+		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lat', 'lng', 'lbs_lykill', 'skrar', 'greinar', 'ornefni', 'tegund')
 
 	def get_skrar(self, obj):
 		#qset =
@@ -119,6 +155,29 @@ class BaeirSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = BaejatalBaeir
 		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lat', 'lng', 'lbs_lykill', 'fjoldi_skjala', 'tegund')
+
+
+class ArticleListSerializer(serializers.ModelSerializer):
+	authors = EinstaklingarSerializer(many=True)
+	article_collection = ArticleCollectionSerializer()
+	baeir = BaeirSerializer(many=True)
+
+	class Meta:
+		model = Articles
+		fields = ('id', 'title', 'article_collection', 'authors', 'baeir')
+
+
+class ArticleSingleSerializer(serializers.ModelSerializer):
+	authors = EinstaklingarSerializer(many=True)
+	article_collection = ArticleCollectionSerializer()
+	baeir = BaeirSerializer(many=True)
+
+	class Meta:
+		model = Articles
+		fields = ('id', 'title', 'content', 'article_collection', 'authors', 'baeir')
+
+
+
 
 class BBaerSerializer(serializers.ModelSerializer):
 	tegund = BaejatalTegundSerializer()
@@ -204,16 +263,6 @@ class EinstaklingarStadirSerializer(serializers.ModelSerializer):
 		fields = ('id', 'tengsl', 'baer', 'upphafsar', 'lokaar')
 
 
-class EinstaklingarSerializer(serializers.ModelSerializer):
-	stadir = serializers.SerializerMethodField()
-
-	class Meta:
-		model = Einstaklingar
-		fields = ('id', 'nafn', 'faedingarar', 'aukanafn', 'faedingarstadur', 'danarar', 'heimili','stadir')
-
-	def get_stadir(self, obj):
-		qset = EinstaklingarBaeir.objects.filter(einstaklingur=obj.id)
-		return [EinstaklingarBaeirSerializer(m).data for m in qset]
 
 
 class HlutverkEinstaklingsSerializer(serializers.ModelSerializer):
