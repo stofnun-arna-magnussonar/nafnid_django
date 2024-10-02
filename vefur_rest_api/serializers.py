@@ -518,7 +518,8 @@ class GeoleitSerializer(serializers.ModelSerializer):
 			'lat',
 			'lng',
 			'tegund',
-			'tegund_id'
+			'tegund_id',
+			'article_count'
 		)
 
 
@@ -561,10 +562,11 @@ class BaejaleitSerializer(serializers.ModelSerializer):
 	hreppur = HrepparSerializer(many=False, read_only=True)
 	sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
 	sysla = SyslaSerializer(many=False, read_only=True)
+	tegund = BaejatalTegundSerializer()
 
 	class Meta:
 		model = BaejatalBaeir
-		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lat', 'lng', 'lbs_lykill')
+		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lat', 'lng', 'lbs_lykill', 'tegund')
 
 
 class SiaBaejaleitSyslur(serializers.ModelSerializer):

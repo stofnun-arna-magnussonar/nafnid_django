@@ -704,6 +704,7 @@ class Geoleit(models.Model):
 	tegund_id = models.IntegerField(blank=True, null=True)
 	lat = models.FloatField(blank=True, null=True)
 	lng = models.FloatField(blank=True, null=True)
+	article_count = models.IntegerField(blank=True, null=True)
 
 	class Meta:
 		managed = False  # Created from a view. Don't remove.

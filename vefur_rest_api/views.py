@@ -168,7 +168,7 @@ class Baejaleit(viewsets.ReadOnlyModelViewSet):
 				queryset = queryset.filter(Q(sveitarfelag__id=sveitarfelag))
 			elif hreppur:
 				queryset = queryset.filter(Q(hreppur__id=hreppur))
-
+			
 		return queryset
 
 
@@ -442,8 +442,21 @@ class ArticlesViewSet(viewsets.ReadOnlyModelViewSet):
 		if author is not None:
 			queryset = queryset.filter(article_author__id=author)
 
+		collection = self.request.query_params.get('collection', None)
+		if collection is not None:
+			queryset = queryset.filter(article_collection__id=collection)
+
 		baer = self.request.query_params.get('baer', None)
 		if baer is not None:
 			queryset = queryset.filter(articlesbaeir__baeir__id=baer)
+		
+		query = self.request.query_params.get('q', None)
+		if query is not None:
+			if '*' in query:
+				reg = query.replace('*', '.*?')
+				queryset = queryset.filter(Q(title__iregex=r'^'+reg) | Q(articlesbaeir__baeir__baejarnafn__iregex=r'^'+reg))
+			else:
+				queryset = queryset.filter(Q(title__istartswith=query) | Q(articlesbaeir__baeir__baejarnafn__istartswith=query))
 
-		return queryset
+
+		return queryset.distinct()
