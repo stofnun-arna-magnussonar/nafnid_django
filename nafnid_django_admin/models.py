@@ -34,7 +34,8 @@ class Ornefnaskrar(models.Model):
 	ornefni = models.ManyToManyField(
 		'Ornefni',
 		through='OrnefnaskrarOrnefni',
-		verbose_name='Örnefni'
+		verbose_name='Örnefni',
+		related_name='ornefnaskrar_ornefni'
 	)
 
 	baeir = models.ManyToManyField(
@@ -181,6 +182,14 @@ class Ornefni(models.Model):
 	tvitak = models.BooleanField(blank=True, null=True, verbose_name='Tvítekning?')
 	uuid = models.CharField(max_length=36, blank=True, null=True, verbose_name='UUID Landmælinga')
 
+	ornefnaskrar = models.ManyToManyField(
+		'Ornefnaskrar',
+		through='OrnefnaskrarOrnefni',
+		verbose_name='Örnefnaskrár',
+		related_name='ornefni_ornefnaskrar'
+	)
+
+
 	class Meta:
 		managed = False
 		db_table = 'ocr_ornefni'
@@ -204,6 +213,7 @@ class Ornefni(models.Model):
 class OrnefnaskrarOrnefni(models.Model):
 	ornefni = models.ForeignKey(Ornefni, on_delete=models.DO_NOTHING, db_column='ocrornefni', verbose_name='örnefni')
 	ornefnaskra = models.ForeignKey(Ornefnaskrar, on_delete=models.DO_NOTHING, db_column='skra')
+	skra_texti = models.TextField()
 
 	class Meta:
 		managed = False
@@ -769,6 +779,7 @@ class Articles(models.Model):
 		db_table = 'articles'
 		verbose_name = 'grein'
 		verbose_name_plural = 'greinar'
+		ordering = ['title']
 
 
 class ArticlesAuthors(models.Model):

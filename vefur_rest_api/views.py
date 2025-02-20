@@ -270,7 +270,11 @@ class Uuid(viewsets.ReadOnlyModelViewSet):
 
 
 class OrnefniViewSet(viewsets.ReadOnlyModelViewSet):
-	serializer_class = OrnefninSerializer
+	def get_serializer_class(self):
+		if self.action == 'list':
+			return OrnefninSerializer
+		if self.action == 'retrieve':
+			return OrnefninSingleSerializer
 
 	def get_queryset(self):
 		return Ornefni.objects.order_by('ornefni').all()

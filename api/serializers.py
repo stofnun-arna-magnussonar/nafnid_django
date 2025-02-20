@@ -242,6 +242,30 @@ class OrnefninSerializer(serializers.ModelSerializer):
         model = Ornefni
         fields = ('id', 'ornefni', 'uuid', 'lat', 'lon', 'ornefnaskra', 'okay')
 
+class OrnefnaskrarSimpleSerializer(serializers.ModelSerializer):
+    baeir = BaeirSerializer(many=True, read_only=True)
+    tegund = TegundSerializer(many=True, read_only=True)
+    stada = StadaSerializer(many=True, read_only=True)
+    hreppur = HreppurSerializer(many=False, read_only=True)
+    sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
+    sysla = SyslaSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Ornefnaskrar
+        fields = ('id',  'lmi', 'fjoldi_ornefna', 'texti', 'stafraent', 'pappir', 'titill', 'hreppur', 'sveitarfelag', 'sysla', 'tegund', 'stada', 'baeir')
+
+    def get_einstaklingar(self, obj):
+        qset = OrnefnaskrarEinstaklingar.objects.filter(ornefnaskra=obj.id)
+        return [HlutverkEinstaklingsSerializer(m).data for m in qset]
+
+class OrnefninSingleSerializer(serializers.ModelSerializer):
+    ornefnaskrar = OrnefnaskrarSimpleSerializer(many=True)
+
+    class Meta:
+        model = Ornefni
+        fields = ('id', 'ornefni', 'uuid', 'lat', 'lon', 'ornefnaskrar', 'okay')
+
+
 
 class OrnefniSerializer(serializers.ModelSerializer):
     ornefni = OrnefninSerializer(source='ornefni', many=False)
