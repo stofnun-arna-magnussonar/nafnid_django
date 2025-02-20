@@ -527,7 +527,7 @@ class OrnefnaleitSerializer(serializers.ModelSerializer):
 	def get_ornefnaskrar(self, obj):
 		objs = OrnefnaskrarOrnefni.objects.filter(ornefni_id=obj.id)
 
-		serializer = OrnefnaskrarMinniSerializer([obj.ornefnaskra if obj.ornefnaskra is not None else None for obj in objs], many=True)
+		serializer = OrnefnaskrarMinniSerializer([obj.ornefnaskra if obj is not None and obj.ornefnaskra is not None else None for obj in objs], many=True)
 
 		return serializer.data
 
