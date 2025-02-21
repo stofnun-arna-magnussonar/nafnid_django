@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'vefur_rest_api',
     'rest_framework_recaptcha',
-    'api',
+    #'api',
+	#'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+	#'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'nafnid_django.urls'
@@ -163,5 +165,10 @@ CKEDITOR_CONFIGS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 200
+    'PAGE_SIZE': 50
 }
+
+INTERNAL_IPS = [
+	'130.208.108.18',
+	'85.220.46.164'
+]

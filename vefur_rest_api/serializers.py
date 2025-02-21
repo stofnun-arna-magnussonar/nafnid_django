@@ -157,6 +157,17 @@ class BaeirSerializer(serializers.ModelSerializer):
 		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla', 'lat', 'lng', 'lbs_lykill', 'fjoldi_skjala', 'tegund')
 
 
+class BaeirMinnstSerializer(serializers.ModelSerializer):
+	hreppur = HreppurSerializer(many=False, read_only=True)
+	#sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
+	sysla = SyslaSerializer(many=False, read_only=True)
+	#tegund = BaejatalTegundSerializer()
+
+	class Meta:
+		model = BaejatalBaeir
+		fields = ('id', 'baejarnafn', 'sveitarfelag', 'hreppur', 'sysla')
+
+
 class ArticleListSerializer(serializers.ModelSerializer):
 	authors = EinstaklingarSerializer(many=True)
 	article_collection = ArticleCollectionSerializer()
@@ -457,11 +468,30 @@ class OrnefnaskrarMinniSerializer(serializers.ModelSerializer):
 class OrnefnaskrarMinnstSerializer(serializers.ModelSerializer):
 	tegund = TegundSerializer(many=True, read_only=True)
 	stada = StadaSerializer(many=True, read_only=True)
+	skrasetjari = serializers.SerializerMethodField()
+	baeir = BaeirMinnstSerializer(many=True, read_only=True)
+	artal = ArtalSerializer(source='pdf_skra_id', many=False, read_only=True)
+
+	def get_skrasetjari(self, obj):
+		qset = OrnefnaskrarEinstaklingar.objects.filter(ornefnaskra=obj.id, hlutverk=1)
+		m = qset.first()
+		if m:
+			return SkrasetjariSerializer(m.einstaklingur).data
+		else:
+			return False
 
 	class Meta:
 		model = Ornefnaskrar
 		#fields = '__all__'
-		fields = ('id', 'titill', 'tegund', 'stada')
+		fields = (
+			'id', 
+			'titill', 
+			'tegund', 
+			'stada', 
+			'skrasetjari', 
+			'artal', 
+			'baeir'
+		)
 
 
 class TextaleitSerializer(serializers.ModelSerializer):
@@ -518,22 +548,35 @@ class Teg(serializers.RelatedField):
 
 class OrnefnaleitSerializer(serializers.ModelSerializer):
 	#ornefnaskra = OrnefnaskrarMinniSerializer(many=False, read_only=True)
-	ornefnaskrar = serializers.SerializerMethodField()
-	baer = BBaerSerializer(many=False, read_only=True)
-	hreppur = HreppurSerializer(many=False, read_only=True)
-	sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
-	sysla = SyslaSerializer(many=False, read_only=True)
+	#ornefnaskrar = serializers.SerializerMethodField()
+	ornefnaskrar = OrnefnaskrarMinnstSerializer(many=True)
+	#baer = BBaerSerializer(many=False, read_only=True)
+	#hreppur = HreppurSerializer(many=False, read_only=True)
+	#sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
+	#sysla = SyslaSerializer(many=False, read_only=True)
 
 	def get_ornefnaskrar(self, obj):
 		objs = OrnefnaskrarOrnefni.objects.filter(ornefni_id=obj.id)
 
-		serializer = OrnefnaskrarMinniSerializer([obj.ornefnaskra if obj is not None and obj.ornefnaskra is not None else None for obj in objs], many=True)
+		serializer = OrnefnaskrarMinnstSerializer([obj.ornefnaskra if obj is not None and obj.ornefnaskra is not None else None for obj in objs], many=True)
+		#serializer = OrnefnaskrarMinniSerializer(objs, many=True)
 
 		return serializer.data
 
 	class Meta:
 		model = Ornefnapakki
-		fields = ('id', 'ornefni', 'uuid', 'ornefnaskra', 'ornefnaskrar', 'baer', 'hreppur', 'sveitarfelag', 'sysla', 'artal_skrar',)
+		fields = (
+			'id', 
+			'ornefni', 
+			'uuid', 
+			#'ornefnaskra', 
+			'ornefnaskrar', 
+			#'baer', 
+			#'hreppur', 
+			#'sveitarfelag', 
+			#'sysla', 
+			'artal_skrar',
+		)
 
 
 class Uuid(serializers.ModelSerializer):

@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.urls import path
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
@@ -33,6 +33,6 @@ router.register(r'greinar', views.ArticlesViewSet, basename='greinar')
 router.register(r'abending', views.AbendingarViewSet, basename='abending')
 
 urlpatterns = [
-	url(r'^', include(router.urls)),
+	re_path(r'^', include(router.urls)),
 
 ]
