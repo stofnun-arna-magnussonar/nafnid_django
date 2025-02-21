@@ -14,11 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf.urls import url, include
+from django.urls import include, re_path
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
-    url('admin/', admin.site.urls),
-    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
-    url(r'^vefur/api/', include(('vefur_rest_api.urls', 'vefur_rest_api'), namespace='vefur_rest_api')),
-    url(r'^api/', include(('api.urls', 'api'), namespace='api')),
+    re_path('admin/', admin.site.urls),
+    re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    re_path(r'^vefur/api/', include(('vefur_rest_api.urls', 'vefur_rest_api'), namespace='vefur_rest_api')),
+    #re_path(r'^api/', include(('api.urls', 'api'), namespace='api')),
 ]
+#] + debug_toolbar_urls()
