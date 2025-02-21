@@ -153,7 +153,8 @@ CKEDITOR_CONFIGS = {
         'autoParagraph': False,
         'removePlugins': 'htmldataprocessor, stylescombo',
         'protectedSource': [],
-        'contentsCss': 'http://blondal.arnastofnun.is/css/text-styles.css'
+        'contentsCss': 'http://blondal.arnastofnun.is/css/text-styles.css',
+	'specialChars': ['→ ', 'ǫ', 'Ǫ', 'Ø', 'ø', 'œ', 'ä', 'å', '<', '>', '[', ']', '„', '“']
     }
 }
 
