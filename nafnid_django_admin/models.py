@@ -222,7 +222,7 @@ class OrnefnaskrarOrnefni(models.Model):
 		verbose_name_plural = 'örnefni'
 
 class OrnefnaskrarOrnefnapakki(models.Model):
-	ornefni = models.ForeignKey('Ornefnapakki', on_delete=models.DO_NOTHING, db_column='ocrornefni', verbose_name='örnefni')
+	ornefni = models.ForeignKey('Ornefnapakki', on_delete=models.DO_NOTHING, db_column='ocrornefni', related_name='ornefnaskrar')
 	ornefnaskra = models.ForeignKey(Ornefnaskrar, on_delete=models.DO_NOTHING, db_column='skra')
 	skra_texti = models.TextField()
 
@@ -643,7 +643,8 @@ class Ornefnapakki(models.Model):
 	sveitarfelag = models.ForeignKey(BaejatalSveitarfelogNy, on_delete=models.DO_NOTHING, db_column='sveitarfelag')
 	sysla = models.ForeignKey(BaejatalSyslur, on_delete=models.DO_NOTHING, db_column='sysla')
 	artal_skrar = models.IntegerField(blank=True, null=True, verbose_name='ártal skrár')
-	ornefnaskrar = models.ManyToManyField(Ornefnaskrar, through=OrnefnaskrarOrnefnapakki, related_name='ornefnaskrar')
+	#ornefnaskrar = models.ManyToManyField(OrnefnaskrarOrnefnapakki, related_name='ornefnaskrar')
+	#ornefnaskrar = models.ManyToManyField(Ornefnaskrar, through=OrnefnaskrarOrnefnapakki, related_name='ornefnaskrar')
 
 	def __str__(self):
 		return self.ornefni

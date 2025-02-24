@@ -545,11 +545,21 @@ class Teg(serializers.RelatedField):
 
 ''' =========================== LEIT =========================== '''
 
+class OrnefnaskrarOrnefnapakkiSerializer(serializers.ModelSerializer):
+	ornefnaskra = OrnefnaskrarMinnstSerializer()
+
+	class Meta:
+		model = OrnefnaskrarOrnefnapakki
+		fields = (
+			'ornefnaskra',
+			'skra_texti'
+		)
 
 class OrnefnaleitSerializer(serializers.ModelSerializer):
 	#ornefnaskra = OrnefnaskrarMinniSerializer(many=False, read_only=True)
 	#ornefnaskrar = serializers.SerializerMethodField()
-	ornefnaskrar = OrnefnaskrarMinnstSerializer(many=True)
+	ornefnaskrar = OrnefnaskrarOrnefnapakkiSerializer(many=True)
+	#ornefnaskrar = OrnefnaskrarOrnefniSerializer(many=True)
 	#baer = BBaerSerializer(many=False, read_only=True)
 	#hreppur = HreppurSerializer(many=False, read_only=True)
 	#sveitarfelag = SveitarfelagSerializer(many=False, read_only=True)
