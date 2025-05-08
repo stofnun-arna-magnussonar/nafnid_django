@@ -30,6 +30,9 @@ router.register(r'syslur', views.SyslurViewSet, basename='syslur')
 
 router.register(r'greinar', views.ArticlesViewSet, basename='greinar')
 
+router.register(r'nofn_islendinga/greinar', views.NofnIslendingaGreinarViewSet, basename='nofn_islendinga_greinar')
+router.register(r'nofn_islendinga', views.NofnIslendingaNofnViewSet, basename='nofn_islendinga')
+
 router.register(r'abending', views.AbendingarViewSet, basename='abending')
 
 urlpatterns = [

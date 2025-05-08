@@ -542,7 +542,16 @@ class ArticlesAdmin(admin.ModelAdmin):
 	list_display = ['id', 'title', 'article_collection']
 	list_display_links = ['id', 'title']
 	inlines = [ArticleBaeirInline, ArticlesAuthorsInline]
-	
+
+
+class NofnIslendingaNofnInline(admin.TabularInline):
+	model = NofnIslendingaNofn
+	fields = ['nafn', 'ofl', 'beyging', 'rnum', 'adalord']
+
+class NofnIslendingaGreinarAdmin(admin.ModelAdmin):
+	model = NofnIslendingaGreinar
+	inlines = [NofnIslendingaNofnInline]
+	search_fields = ['nafn__nafn']
 
 admin.site.disable_action('delete_selected')
 admin.site.view_on_site = False
@@ -567,3 +576,5 @@ admin.site.register(Grunngogn, GrunngognAdmin)
 
 admin.site.register(Abendingar, AbendingarAdmin)
 admin.site.register(Articles, ArticlesAdmin)
+
+admin.site.register(NofnIslendingaGreinar, NofnIslendingaGreinarAdmin)

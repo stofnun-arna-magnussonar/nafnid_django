@@ -464,3 +464,23 @@ class ArticlesViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 		return queryset.distinct()
+
+class NofnIslendingaNofnViewSet(viewsets.ReadOnlyModelViewSet):
+	serializer_class = NofnIslendingaNofnSerializer
+
+	def get_queryset(self):
+		queryset = NofnIslendingaNofn.objects.all()
+
+		return queryset
+
+class NofnIslendingaGreinarViewSet(viewsets.ReadOnlyModelViewSet):
+	serializer_class = NofnIslendingaGreinarSerializer
+
+	def get_queryset(self):
+		queryset = NofnIslendingaGreinar.objects.all()
+
+		q = self.request.query_params.get('q', None)
+		if q is not None:
+			queryset = queryset.filter(nafn__nafn__icontains=q)
+
+		return queryset

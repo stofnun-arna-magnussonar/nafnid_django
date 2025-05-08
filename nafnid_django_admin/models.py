@@ -816,4 +816,45 @@ class ArticlesBaeir(models.Model):
 		verbose_name = 'tengdur bær'
 		verbose_name_plural = 'tengdir bæir'
 
+class NofnIslendingaGreinar(models.Model):
+	texti = models.TextField(verbose_name='texti')
+	heimild = models.TextField(null=True, blank=True)
+	ath1 = models.TextField(null=True, blank=True)
+	ath2 = models.TextField(null=True, blank=True)
+	#nafn = models.CharField(max_length=255, verbose_name='uppflettinafn')
+	#visun = models.CharField(max_length=255, verbose_name='vísun', null=True, blank=True)
+	visun = models.ForeignKey('NofnIslendingaNofn', models.SET_NULL, verbose_name='vísun', null=True, blank=True, related_name='visun')
 
+	#sja = models.CharField(max_length=255, verbose_name='vísun', null=True, blank=True)
+	sja = models.ForeignKey('NofnIslendingaNofn', models.SET_NULL, verbose_name='sjá', null=True, blank=True, related_name='sja')
+
+	def __str__(self):
+		return str(NofnIslendingaNofn.objects.filter(grein__id=self.id).first())
+
+	class Meta:
+		managed = False
+		db_table = 'nofn_islendinga_greinar'
+		verbose_name = 'Nöfn íslendinga: greina'
+		verbose_name_plural = 'Nöfn íslendinga: greinar'
+		ordering = ['nafn__id']
+
+
+class NofnIslendingaNofn(models.Model):
+	nafn = models.CharField(max_length=255, verbose_name='uppflettinafn')
+	ofl = models.CharField(max_length=20, blank=True, null=True, verbose_name='kyn')
+	beyging = models.CharField(max_length=255, blank=True, null=True, verbose_name='beying')
+	#grein = models.CharField(max_length=255, blank=True, null=True, verbose_name='beying')
+	grein = models.ForeignKey(NofnIslendingaGreinar, models.CASCADE, related_name='nafn')
+	rnum = models.IntegerField(verbose_name='raðnúmer', null=True, blank=True)
+	adalord = models.BooleanField(verbose_name='aðalnafn')
+	rownum = models.IntegerField()
+
+	def __str__(self):
+		return self.nafn
+
+	class Meta:
+		managed = False
+		db_table = 'nofn_islendinga_uppflettiord'
+		verbose_name = 'Nöfn íslendinga'
+		verbose_name_plural = 'Nöfn íslendinga'
+		ordering = ['id']

@@ -752,11 +752,11 @@ class SinglePageSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Page
 		fields = ('id',
-				  'url',
-				  'title',
-				  'content',
-				  'path'
-				  )
+			'url',
+			'title',
+			'content',
+			'path'
+		)
 
 
 class AbendingarSendSerializer(serializers.ModelSerializer):
@@ -766,4 +766,18 @@ class AbendingarSendSerializer(serializers.ModelSerializer):
 		model = Abendingar
 		fields = '__all__'
 
-''' =========================== /VEFUR =========================== '''
+
+class NofnIslendingaNofnSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = NofnIslendingaNofn
+		fields = '__all__'
+
+
+class NofnIslendingaGreinarSerializer(serializers.ModelSerializer):
+	nafn = NofnIslendingaNofnSerializer(many=True)
+	visun = NofnIslendingaNofnSerializer()
+	sja = NofnIslendingaNofnSerializer()
+
+	class Meta:
+		model = NofnIslendingaGreinar
+		fields = '__all__'
