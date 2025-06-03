@@ -37,5 +37,4 @@ router.register(r'abending', views.AbendingarViewSet, basename='abending')
 
 urlpatterns = [
 	re_path(r'^', include(router.urls)),
-
 ]

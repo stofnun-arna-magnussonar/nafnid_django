@@ -22,5 +22,5 @@ urlpatterns = [
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
     re_path(r'^vefur/api/', include(('vefur_rest_api.urls', 'vefur_rest_api'), namespace='vefur_rest_api')),
     #re_path(r'^api/', include(('api.urls', 'api'), namespace='api')),
-#]
-] + debug_toolbar_urls()
+]
+#] + debug_toolbar_urls()

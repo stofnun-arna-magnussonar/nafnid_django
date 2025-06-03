@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'vefur_rest_api',
     'rest_framework_recaptcha',
     #'api',
-	'debug_toolbar'
+	#'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-	'debug_toolbar.middleware.DebugToolbarMiddleware'
+	#'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'nafnid_django.urls'
