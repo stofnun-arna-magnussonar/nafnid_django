@@ -126,7 +126,7 @@ class Ornefnaleit(viewsets.ReadOnlyModelViewSet):
 				reg = query.replace('*', '.*?')
 				queryset = Ornefnapakki.objects.filter(Q(samraemt__iregex=r''+reg+'') | Q(ornefni__iregex=r''+reg+'')).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
 			else:
-				queryset = Ornefnapakki.objects.filter(Q(samraemt__istartswith=query) | Q(ornefni__istartswith=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
+				queryset = Ornefnapakki.objects.filter(Q(samraemt__icontains=query) | Q(ornefni__icontains=query)).distinct('ornefni', 'ornefnaskra').order_by('ornefni', 'ornefnaskra')
 
 			if tegund:
 				queryset = queryset.filter(Q(ornefnaskra__tegund__id=tegund))
@@ -470,6 +470,10 @@ class NofnIslendingaNofnViewSet(viewsets.ReadOnlyModelViewSet):
 
 	def get_queryset(self):
 		queryset = NofnIslendingaNofn.objects.all()
+
+		q = self.request.query_params.get('q', None)
+		if q is not None:
+			queryset = queryset.filter(nafn__icontains=q)
 
 		return queryset
 

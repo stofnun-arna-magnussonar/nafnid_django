@@ -651,7 +651,7 @@ class Ornefnapakki(models.Model):
 
 	class Meta:
 		managed = False
-		db_table = 'ornefnapakki'
+		db_table = 'mv_ornefnapakki'
 		#ordering = ('ornefni',)
 
 

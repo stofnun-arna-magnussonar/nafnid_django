@@ -413,7 +413,8 @@ class ArtalSerializer(serializers.ModelSerializer):
 
 class OrnefnaskrarSerializer(serializers.ModelSerializer):
 	baeir = BaeirSerializer(many=True, read_only=True)
-	ornefni = OrnefninSerializer(many=True, read_only=True)
+	#ornefni = OrnefninSerializer(many=True, read_only=True)
+	ornefni = serializers.SerializerMethodField()
 	einstaklingar = serializers.SerializerMethodField()
 	tegund = TegundSerializer(many=True, read_only=True)
 	stada = StadaSerializer(many=True, read_only=True)
@@ -423,13 +424,21 @@ class OrnefnaskrarSerializer(serializers.ModelSerializer):
 	pdf = PDFSerializer(source='pdf_skra_id', many=False, read_only=True)
 	artal = ArtalSerializer(source='pdf_skra_id', many=False, read_only=True)
 
-	class Meta:
-		model = Ornefnaskrar
-		fields = ('id', 'lmi', 'fjoldi_ornefna', 'texti', 'stafraent', 'pappir', 'titill', 'hreppur', 'sveitarfelag', 'sysla', 'pdf', 'pdf_skra_id', 'tegund', 'stada', 'ornefni', 'baeir', 'einstaklingar','artal',)
+	def get_ornefni(self, obj):
+		objs = OrnefnaskrarOrnefni.objects.filter(ornefnaskra_id=obj.id).order_by('ornefni__ornefni')
+
+		return list(map(lambda skra: {
+			'skra_texti': skra.skra_texti,
+			'ornefni': OrnefninSerializer(skra.ornefni).data
+		}, objs))
 
 	def get_einstaklingar(self, obj):
 		qset = OrnefnaskrarEinstaklingar.objects.filter(ornefnaskra=obj.id)
 		return [HlutverkEinstaklingsSerializer(m).data for m in qset]
+
+	class Meta:
+		model = Ornefnaskrar
+		fields = ('id', 'lmi', 'fjoldi_ornefna', 'texti', 'stafraent', 'pappir', 'titill', 'hreppur', 'sveitarfelag', 'sysla', 'pdf', 'pdf_skra_id', 'tegund', 'stada', 'ornefni', 'baeir', 'einstaklingar','artal',)
 
 
 class OrnefnaskrarMinniSerializer(serializers.ModelSerializer):
